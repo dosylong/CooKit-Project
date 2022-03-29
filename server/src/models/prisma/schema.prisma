@@ -11,11 +11,8 @@ datasource db {
 }
 
 model User {
-  id           String   @id @default(uuid())
-  name         String?
-  email        String   @unique
-  username     String   @unique
-  password     String?
-  refreshToken String?
-  createdAt    DateTime @default(now())
+  userFirebaseId String  @id
+  email          String  @unique
+  bio            String?
+  fullName       String?
 }
