@@ -26,7 +26,7 @@ export default function RegisterInfoForm(props) {
     activeStep,
     formInfoData,
     setFormInfoData,
-    onClickSubmitForm,
+    onClickSubmitInfoForm,
   } = props;
 
   const initialValues = {
@@ -39,11 +39,12 @@ export default function RegisterInfoForm(props) {
       bio: values.bio,
       fullName: values.fullName,
     });
+    onClickSubmitInfoForm(values);
   };
 
   const signUpSchema = yup.object().shape({
     bio: yup.string().required('Bio is required!'),
-    firstName: yup
+    fullName: yup
       .string()
       .min(2, 'Full Name is too short!')
       .max(500, 'Full Name is too long!')
@@ -71,7 +72,6 @@ export default function RegisterInfoForm(props) {
         validationSchema={signUpSchema}
         onSubmit={(values) => {
           handleSubmitInfo(values);
-          onClickSubmitForm(values);
           return new Promise((resolve) => {
             setTimeout(resolve, 1100);
           });
@@ -89,7 +89,9 @@ export default function RegisterInfoForm(props) {
               <FormControl
                 isRequired
                 isInvalid={errors.fullName && touched.fullName}>
-                <FormLabel htmlFor='fullName'>Full Name</FormLabel>
+                <FormLabel htmlFor='fullName' fontWeight='bold'>
+                  Full Name
+                </FormLabel>
                 <InputGroup>
                   <InputLeftElement
                     pointerEvents='none'
@@ -111,7 +113,9 @@ export default function RegisterInfoForm(props) {
               </FormControl>
 
               <FormControl isRequired isInvalid={errors.bio && touched.bio}>
-                <FormLabel htmlFor='bio'>Bio</FormLabel>
+                <FormLabel htmlFor='bio' fontWeight='bold'>
+                  Bio
+                </FormLabel>
                 <InputGroup>
                   <InputLeftElement
                     pointerEvents='none'

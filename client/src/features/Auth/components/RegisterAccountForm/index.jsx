@@ -28,11 +28,11 @@ export default function RegisterForm(props) {
   const {
     showPassword,
     setShowPassword,
-    nextStep,
     prevStep,
     activeStep,
     formData,
     setFormData,
+    onClickNextStepAccount,
   } = props;
 
   const initialValues = {
@@ -47,6 +47,7 @@ export default function RegisterForm(props) {
       password: values.password,
       confirmPassword: values.confirmPassword,
     });
+    onClickNextStepAccount(values);
   };
 
   const signUpSchema = yup.object().shape({
@@ -91,13 +92,14 @@ export default function RegisterForm(props) {
         validationSchema={signUpSchema}
         onSubmit={(values) => {
           handleOnSubmit(values);
-          nextStep();
         }}>
         {({ handleChange, handleSubmit, values, errors, touched }) => (
           <Form>
             <VStack spacing='5'>
               <FormControl isRequired isInvalid={errors.email && touched.email}>
-                <FormLabel htmlFor='email'>Email</FormLabel>
+                <FormLabel htmlFor='email' fontWeight='bold'>
+                  Email
+                </FormLabel>
                 <InputGroup>
                   <InputLeftElement
                     pointerEvents='none'
@@ -121,7 +123,9 @@ export default function RegisterForm(props) {
               <FormControl
                 isRequired
                 isInvalid={errors.password && touched.password}>
-                <FormLabel>Password</FormLabel>
+                <FormLabel htmlFor='password' fontWeight='bold'>
+                  Password
+                </FormLabel>
                 <InputGroup>
                   <InputLeftElement
                     pointerEvents='none'
@@ -156,7 +160,7 @@ export default function RegisterForm(props) {
               <FormControl
                 isRequired
                 isInvalid={errors.confirmPassword && touched.confirmPassword}>
-                <FormLabel htmlFor='confirmPassword'>
+                <FormLabel htmlFor='confirmPassword' fontWeight='bold'>
                   Confirm password
                 </FormLabel>
                 <InputGroup>

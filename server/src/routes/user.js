@@ -2,10 +2,19 @@ const UserController = require('../controllers/UserController');
 const express = require('express');
 const router = express.Router();
 
+//router GET user/email/check
+router.get('/email/check', UserController.checkUserEmail);
+
 //router GET user/profile
 router.get('/profile', UserController.getUserProfile);
 
 //router POST user/create
 router.post('/create', UserController.createUser);
+
+//router POST user/edit/profile
+router.post('/edit/profile', UserController.editUserProfile);
+
+//router PUT user/edit/avatar
+router.put('/edit/avatar', UserController.editUserAvatar);
 
 module.exports = router;

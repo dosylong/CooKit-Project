@@ -15,4 +15,5 @@ model User {
   email          String  @unique
   bio            String?
   fullName       String?
+  photoURL       String?
 }

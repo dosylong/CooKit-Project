@@ -18,13 +18,18 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { MoonIcon, SunIcon } from '@chakra-ui/icons';
-import { Link } from 'react-router-dom';
-import userApi from '../../api/userApi';
+import { Link, useNavigate } from 'react-router-dom';
 import { auth } from '../../firebase';
+import { FiLogOut } from 'react-icons/fi';
+import { FiUser } from 'react-icons/fi';
+import { IoIosArrowDown } from 'react-icons/io';
+//import userApi from '../../api/userApi';
 
 export default function Header() {
   const { colorMode, toggleColorMode } = useColorMode();
   //const { isOpen, onOpen, onClose } = useDisclosure();
+  const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem('account'));
 
   const onPressSignOut = async () => {
     await auth.signOut().then(() => {
@@ -33,20 +38,11 @@ export default function Header() {
     });
   };
 
-  const [profile, setProfile] = useState({});
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const onPressProfile = () => {
+    return navigate(`/profile/${user?.uid}`);
+  };
 
-  useEffect(() => {
-    const userAuth = auth.onAuthStateChanged(async (user) => {
-      if (user) {
-        const userProfile = await userApi.getUserProfile({
-          userFirebaseId: user.uid,
-        });
-        setProfile(userProfile);
-      }
-    });
-    return () => userAuth();
-  }, []);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     if (!isLoggedIn) {
@@ -55,10 +51,21 @@ export default function Header() {
   }, [isLoggedIn]);
   return (
     <>
-      <Box bg={useColorModeValue('gray.100', 'gray.900')} px={4}>
+      <Box bg={useColorModeValue('gray.100', 'gray.900')} px={4} w='full'>
         <Container maxW='container.xl'>
           <Flex h='16' alignItems='center' justifyContent='space-between'>
-            <Box>Logo</Box>
+            <Link to='/'>
+              <Box
+                fontSize='xl'
+                fontWeight='bold'
+                bg={useColorModeValue('gray.100', 'gray.900')}
+                _hover={{
+                  color: 'green.500',
+                  cursor: 'pointer',
+                }}>
+                Cookit 👩‍🍳
+              </Box>
+            </Link>
 
             {isLoggedIn ? (
               <Flex alignItems='center'>
@@ -73,40 +80,61 @@ export default function Header() {
                       variant='link'
                       cursor='pointer'
                       minW={0}>
-                      <Avatar
-                        size='sm'
-                        src='https://avatars.dicebear.com/api/micah/45.svg'
-                      />
+                      <Stack direction='row' spacing={1}>
+                        <Avatar
+                          size='sm'
+                          src={
+                            !user?.photoURL
+                              ? 'https://avatars.dicebear.com/api/micah/69.svg'
+                              : user?.photoURL
+                          }
+                        />
+
+                        <Box py='3' fontSize={12} px='2'>
+                          <IoIosArrowDown />
+                        </Box>
+                      </Stack>
                     </MenuButton>
+
                     <MenuList alignItems='center' spacing={7}>
                       <Center>
                         <Avatar
                           size='2xl'
-                          src='https://avatars.dicebear.com/api/micah/45.svg'
+                          src={
+                            !user?.photoURL
+                              ? 'https://avatars.dicebear.com/api/micah/69.svg'
+                              : user?.photoURL
+                          }
                         />
                       </Center>
 
                       <Center h='50px'>
-                        {profile ? (
+                        {user ? (
                           <Stack direction='row' spacing={1}>
-                            <Text>{profile?.firstName}</Text>
-                            <Text>{profile?.lastName}</Text>
+                            <Text>{user?.displayName}</Text>
                           </Stack>
-                        ) : (
-                          <Stack direction='row' spacing={1}>
-                            <Text>{profile?.fullName}</Text>
-                          </Stack>
-                        )}
+                        ) : null}
                       </Center>
 
                       <MenuDivider />
-                      <MenuItem>
-                        <Link to='/account/login'>Login</Link>
+
+                      <MenuItem onClick={onPressProfile}>
+                        <Stack direction='row' spacing={1}>
+                          <Box py='1'>
+                            <FiUser />
+                          </Box>
+                          <Box>Profile</Box>
+                        </Stack>
                       </MenuItem>
-                      <MenuItem>
-                        <Link to='/account/register'>Register</Link>
+
+                      <MenuItem onClick={onPressSignOut}>
+                        <Stack direction='row' spacing={1}>
+                          <Box py='1'>
+                            <FiLogOut />
+                          </Box>
+                          <Box>Logout</Box>
+                        </Stack>
                       </MenuItem>
-                      <MenuItem onClick={onPressSignOut}>Logout</MenuItem>
                     </MenuList>
                   </Menu>
                 </Stack>

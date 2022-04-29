@@ -23,30 +23,46 @@ export default function RegisterPage() {
     bio: '',
   });
 
-  const onClickSubmitForm = async (values) => {
+  const { activeStep, nextStep, prevStep } = useSteps({
+    initialStep: 0,
+  });
+
+  const onClickNextStepAccount = async (values) => {
     try {
       await auth
-        .createUserWithEmailAndPassword(formData.email, formData.password)
+        .createUserWithEmailAndPassword(values.email, values.password)
         .then((user) => {
-          toast.success('Registered successfully!', {
-            autoClose: 1100,
-          });
           console.log(user);
+          nextStep();
         });
+    } catch (error) {
+      if (error.code === 'auth/email-already-in-use') {
+        toast.error(`${values.email} already in use!`);
+      }
+    }
+  };
 
-      await userApi.createUser({
-        userFirebaseId: auth.currentUser.uid,
-        email: auth.currentUser.email,
-        fullName: values.fullName,
-        bio: values.bio,
-      });
+  const onClickSubmitInfoForm = async (values) => {
+    try {
+      await userApi
+        .createUser({
+          userFirebaseId: auth.currentUser.uid,
+          email: auth.currentUser.email,
+          fullName: values.fullName,
+          bio: values.bio,
+        })
+        .then(() => {
+          toast.success('Registered successfully!', {
+            autoClose: 1200,
+          });
+        });
 
       await auth.currentUser
         .updateProfile({
           displayName: values.fullName,
         })
-        .then(() => {
-          console.log('Updated display name successfully');
+        .then((user) => {
+          console.log(user);
         })
         .catch((error) => {
           console.log(error);
@@ -54,17 +70,13 @@ export default function RegisterPage() {
 
       setTimeout(() => {
         window.location.pathname = '/';
-      }, 1100);
+      }, 1400);
     } catch (error) {
       if (error.code === 'auth/email-already-in-use') {
         toast.error('This Email already in use!');
       }
     }
   };
-
-  const { activeStep, nextStep, prevStep } = useSteps({
-    initialStep: 0,
-  });
 
   return (
     <Stack spacing='0' direction={['column', 'row']} h='100vh' w='100vw'>
@@ -83,12 +95,12 @@ export default function RegisterPage() {
             {activeStep === 0 && (
               <RegisterAccountForm
                 activeStep={activeStep}
-                nextStep={nextStep}
                 prevStep={prevStep}
                 showPassword={showPassword}
                 setShowPassword={setShowPassword}
                 formData={formData}
                 setFormData={setFormData}
+                onClickNextStepAccount={onClickNextStepAccount}
               />
             )}
             {activeStep === 1 && (
@@ -97,7 +109,7 @@ export default function RegisterPage() {
                 prevStep={prevStep}
                 formInfoData={formInfoData}
                 setFormInfoData={setFormInfoData}
-                onClickSubmitForm={onClickSubmitForm}
+                onClickSubmitInfoForm={onClickSubmitInfoForm}
               />
             )}
           </Container>

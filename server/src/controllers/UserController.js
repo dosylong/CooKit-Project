@@ -44,6 +44,54 @@ class UserController {
       return next(error);
     }
   };
+
+  checkUserEmail = async (req, res, next) => {
+    try {
+      const response = await prisma.user.findUnique({
+        where: {
+          email: req.query.email,
+        },
+      });
+      if (response) {
+        return res.status(200).json({ message: 'Email already exist' });
+      }
+    } catch (error) {
+      return next(error);
+    }
+  };
+
+  editUserProfile = async (req, res, next) => {
+    try {
+      const response = await prisma.user.update({
+        where: {
+          userFirebaseId: req.body.userFirebaseId,
+        },
+        data: {
+          fullName: req.body.fullName,
+          bio: req.body.bio,
+        },
+      });
+      res.status(200).json(response);
+    } catch (error) {
+      return next(error);
+    }
+  };
+
+  editUserAvatar = async (req, res, next) => {
+    try {
+      const response = await prisma.user.update({
+        where: {
+          userFirebaseId: req.body.userFirebaseId,
+        },
+        data: {
+          photoURL: req.body.photoURL,
+        },
+      });
+      res.status(200).json(response);
+    } catch (error) {
+      return next(error);
+    }
+  };
 }
 
 module.exports = new UserController();

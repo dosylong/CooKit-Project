@@ -5,41 +5,47 @@ import LoginForm from '../../components/LoginForm';
 import { auth } from '../../../../firebase';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import firebase from 'firebase';
-import userApi from '../../../../api/userApi';
+import firebase from 'firebase/app';
+//import userApi from '../../../../api/userApi';
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const provider = new firebase.auth.GoogleAuthProvider();
+  //const user = JSON.parse(localStorage.getItem('account'));
 
   const onPressLoginGoogle = async () => {
     try {
-      await auth.signInWithRedirect(provider).then((result) => {
-        console.log(result);
-      });
-      setTimeout(() => {
-        window.location.pathname = '/';
-      }, 800);
+      await auth
+        .signInWithRedirect(provider)
+        .then((result) => {
+          console.log(result);
+        })
+        .then(() => {
+          window.location.pathname = '/';
+        });
     } catch (error) {
-      if (error.code === 'auth/email-already-in-use') {
-        toast.error('This Email already in use!');
+      if (error) {
+        toast.error(error);
       }
     }
   };
 
-  useEffect(() => {
-    const userAuth = auth.onAuthStateChanged(async (user) => {
-      if (user) {
-        const userProfile = await userApi.createUser({
-          userFirebaseId: user.uid,
-          email: user.email,
-          fullName: user.displayName,
-        });
-        console.log(userProfile);
-      }
-    });
-    return () => userAuth();
-  }, []);
+  // useEffect(() => {
+  //   if (user) return;
+  //   try {
+  //     const createUser = async () => {
+  //       const response = await userApi.createUser({
+  //         userFirebaseId: user?.uid,
+  //         email: user?.email,
+  //         fullName: user?.displayName,
+  //       });
+  //       console.log(response);
+  //     };
+  //     createUser();
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // }, [user]);
 
   const onPressLogin = async (values) => {
     try {
@@ -56,7 +62,7 @@ export default function LoginPage() {
         toast.error('Please check your Password again!');
       }
       if (error.code === 'auth/user-not-found') {
-        toast.error('Please check your Account again!');
+        toast.error('Account not found!');
       }
     }
   };

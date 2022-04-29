@@ -43,7 +43,7 @@ export default function LoginForm(props) {
 
   return (
     <>
-      <Heading size='2xl'>Welcome back.</Heading>
+      <Heading size='2xl'>Welcome back</Heading>
 
       <Box py='3'>
         <Text color='gray.600'>
@@ -101,7 +101,7 @@ export default function LoginForm(props) {
         onSubmit={(values) => {
           onPressLogin(values);
           return new Promise((resolve) => {
-            setTimeout(resolve, 800);
+            setTimeout(resolve, 1200);
           });
         }}>
         {({
@@ -114,10 +114,10 @@ export default function LoginForm(props) {
         }) => (
           <Form>
             <VStack spacing='5'>
-              <FormControl
-                isRequired
-                isInvalid={errors.username && touched.username}>
-                <FormLabel htmlFor='email'>Email address</FormLabel>
+              <FormControl isRequired isInvalid={errors.email && touched.email}>
+                <FormLabel htmlFor='email' fontWeight='bold'>
+                  Email address
+                </FormLabel>
                 <InputGroup>
                   <InputLeftElement
                     pointerEvents='none'
@@ -142,7 +142,9 @@ export default function LoginForm(props) {
                 isRequired
                 isInvalid={errors.password && touched.password}>
                 <HStack justifyContent='space-between'>
-                  <FormLabel htmlFor='password'>Password</FormLabel>
+                  <FormLabel htmlFor='password' fontWeight='bold'>
+                    Password
+                  </FormLabel>
                   <Text
                     color='green.500'
                     fontWeight='bold'
