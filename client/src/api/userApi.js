@@ -21,6 +21,10 @@ const userApi = {
     const url = 'user/edit/avatar';
     return axiosClient.put(url, data);
   },
+  getAllUser: () => {
+    const url = 'user/get/all';
+    return axiosClient.get(url);
+  },
 };
 
 export default userApi;

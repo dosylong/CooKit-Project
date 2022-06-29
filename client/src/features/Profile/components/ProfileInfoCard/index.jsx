@@ -16,9 +16,10 @@ export default function ProfileInfoCard(props) {
   return (
     <Flex
       p={30}
-      w='full'
+      w='380px'
       mx='auto'
       px='auto'
+      pl={2}
       alignItems='center'
       justifyContent='center'>
       <Box
@@ -30,12 +31,12 @@ export default function ProfileInfoCard(props) {
         overflow='hidden'>
         <Image
           w='full'
-          h='full'
+          h='380px'
           fit='cover'
           objectPosition='center'
           src={
             !user?.photoURL
-              ? 'https://avatars.dicebear.com/api/micah/69.svg'
+              ? 'https://avatars.dicebear.com/api/big-smile/60.svg'
               : user?.photoURL
           }
           alt='avatar'
@@ -46,7 +47,7 @@ export default function ProfileInfoCard(props) {
             fontSize='xl'
             fontWeight='bold'
             color={useColorModeValue('gray.800', 'white')}>
-            {user?.displayName}
+            {userProfile?.fullName}
           </chakra.h1>
 
           <chakra.p py={2} color={useColorModeValue('gray.700', 'gray.400')}>
@@ -60,7 +61,7 @@ export default function ProfileInfoCard(props) {
             <Icon as={MdEmail} h={6} w={6} mr={2} />
 
             <chakra.h1 px={2} fontSize='sm'>
-              {user?.email}
+              {userProfile?.email}
             </chakra.h1>
           </Flex>
         </Box>

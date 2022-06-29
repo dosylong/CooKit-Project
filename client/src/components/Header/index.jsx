@@ -16,6 +16,7 @@ import {
   useColorMode,
   Center,
   Text,
+  Divider,
 } from '@chakra-ui/react';
 import { MoonIcon, SunIcon } from '@chakra-ui/icons';
 import { Link, useNavigate } from 'react-router-dom';
@@ -23,12 +24,14 @@ import { auth } from '../../firebase';
 import { FiLogOut } from 'react-icons/fi';
 import { FiUser } from 'react-icons/fi';
 import { IoIosArrowDown } from 'react-icons/io';
+import { GiForkKnifeSpoon } from 'react-icons/gi';
 //import userApi from '../../api/userApi';
 
 export default function Header() {
   const { colorMode, toggleColorMode } = useColorMode();
   //const { isOpen, onOpen, onClose } = useDisclosure();
   const navigate = useNavigate();
+  //const [userProfile, setUserProfile] = useState({});
   const user = JSON.parse(localStorage.getItem('account'));
 
   const onPressSignOut = async () => {
@@ -42,6 +45,10 @@ export default function Header() {
     return navigate(`/profile/${user?.uid}`);
   };
 
+  const onPressCreateRecipe = () => {
+    return navigate('/recipe/create');
+  };
+
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
@@ -49,18 +56,43 @@ export default function Header() {
       setIsLoggedIn(localStorage.getItem('account'));
     }
   }, [isLoggedIn]);
+
+  // useEffect(() => {
+  //   const getUserProfile = async () => {
+  //     if (!user) return;
+  //     try {
+  //       const response = await userApi.getUserProfile({
+  //         userFirebaseId: user?.uid,
+  //       });
+  //       setUserProfile(response);
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   };
+  //   getUserProfile();
+  // }, [user]);
+
   return (
     <>
-      <Box bg={useColorModeValue('gray.100', 'gray.900')} px={4} w='full'>
+      <Box
+        px={4}
+        w='full'
+        backgroundColor={useColorModeValue(
+          'rgba(255,255, 255, 0.8)',
+          'rgba(255,255, 255, 0.1)'
+        )}
+        backdropFilter='saturate(180%) blur(5px)'
+        sx={{
+          position: 'fixed',
+        }}>
         <Container maxW='container.xl'>
           <Flex h='16' alignItems='center' justifyContent='space-between'>
             <Link to='/'>
               <Box
                 fontSize='xl'
                 fontWeight='bold'
-                bg={useColorModeValue('gray.100', 'gray.900')}
                 _hover={{
-                  color: 'green.500',
+                  color: 'green.800',
                   cursor: 'pointer',
                 }}>
                 Cookit 👩‍🍳
@@ -85,7 +117,7 @@ export default function Header() {
                           size='sm'
                           src={
                             !user?.photoURL
-                              ? 'https://avatars.dicebear.com/api/micah/69.svg'
+                              ? 'https://avatars.dicebear.com/api/big-smile/60.svg'
                               : user?.photoURL
                           }
                         />
@@ -102,7 +134,7 @@ export default function Header() {
                           size='2xl'
                           src={
                             !user?.photoURL
-                              ? 'https://avatars.dicebear.com/api/micah/69.svg'
+                              ? 'https://avatars.dicebear.com/api/big-smile/60.svg'
                               : user?.photoURL
                           }
                         />
@@ -111,7 +143,7 @@ export default function Header() {
                       <Center h='50px'>
                         {user ? (
                           <Stack direction='row' spacing={1}>
-                            <Text>{user?.displayName}</Text>
+                            <Text fontWeight='bold'>{user?.displayName}</Text>
                           </Stack>
                         ) : null}
                       </Center>
@@ -126,6 +158,17 @@ export default function Header() {
                           <Box>Profile</Box>
                         </Stack>
                       </MenuItem>
+
+                      <MenuItem onClick={onPressCreateRecipe}>
+                        <Stack direction='row' spacing={1}>
+                          <Box py='1'>
+                            <GiForkKnifeSpoon />
+                          </Box>
+                          <Box>Create new Recipe</Box>
+                        </Stack>
+                      </MenuItem>
+
+                      <Divider />
 
                       <MenuItem onClick={onPressSignOut}>
                         <Stack direction='row' spacing={1}>
@@ -146,9 +189,17 @@ export default function Header() {
                     {colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
                   </Button>
 
-                  <Button>
-                    <Link to='/account/login'>Login</Link>
-                  </Button>
+                  <Box
+                    as='button'
+                    sx={{
+                      cursor: 'pointer',
+                      '&:hover': {
+                        color: 'green.500',
+                        textDecoration: 'underline',
+                      },
+                    }}>
+                    <Link to='/account/login'>Log in</Link>
+                  </Box>
 
                   <Button colorScheme='green'>
                     <Link to='/account/register'>Register</Link>

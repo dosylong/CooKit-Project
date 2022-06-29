@@ -1,5 +1,5 @@
 import { Box, Center, Container, Image, Stack } from '@chakra-ui/react';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import LoginImage from '../../../../assets/register_food.png';
 import LoginForm from '../../components/LoginForm';
 import { auth } from '../../../../firebase';

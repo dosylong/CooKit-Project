@@ -9,7 +9,7 @@ export default function Layout() {
     <>
       <Header />
       <Container maxW='1370px'>
-        <Box minH='100vh' maxH='auto' px={4}>
+        <Box minH='100vh' maxH='auto' py='20' minW='auto' maxW='auto'>
           <Outlet />
         </Box>
       </Container>

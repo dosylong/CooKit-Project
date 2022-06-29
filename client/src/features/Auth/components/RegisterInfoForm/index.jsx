@@ -53,7 +53,9 @@ export default function RegisterInfoForm(props) {
 
   return (
     <>
-      <Heading size='2xl'>Almost there</Heading>
+      <Heading fontSize='70' fontWeight='400'>
+        Almost there
+      </Heading>
 
       <Box py='3'>
         <Text color='gray.600'>

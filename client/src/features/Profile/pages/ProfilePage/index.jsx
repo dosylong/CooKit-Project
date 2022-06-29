@@ -3,7 +3,17 @@ import { useParams } from 'react-router-dom';
 import userApi from '../../../../api/userApi';
 import ProfileInfoCard from '../../components/ProfileInfoCard';
 import ProfileTabs from '../../components/ProfileTabs';
-import { Stack, Box } from '@chakra-ui/react';
+import {
+  Stack,
+  Box,
+  Container,
+  Heading,
+  SimpleGrid,
+  Text,
+  Divider,
+  useColorModeValue,
+  Image,
+} from '@chakra-ui/react';
 import { auth, storage } from '../../../../firebase';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -18,7 +28,7 @@ export default function ProfilePage() {
 
   const user = JSON.parse(localStorage.getItem('account'));
 
-  const updateAvatarUrl = async (url) => {
+  const updateAvatarToDb = async (url) => {
     const response = await userApi.editUserAvatar({
       photoURL: url,
       userFirebaseId: userId,
@@ -26,7 +36,7 @@ export default function ProfilePage() {
     console.log(response);
   };
 
-  const updateAvatar = async (url) => {
+  const updateAvatarToFirebase = (url) => {
     const currentUser = auth.currentUser;
     currentUser
       .updateProfile({
@@ -36,65 +46,62 @@ export default function ProfilePage() {
         toast.success('Edited avatar successfully!', {
           autoClose: 1200,
         });
-        setTimeout(() => {
-          window.location.reload();
-        }, 1400);
         console.log('Updated avatar successfully!');
       })
-
       .catch((error) => {
         console.log(error);
       });
   };
 
-  const onDrop = async () => {
-    const file = acceptedFiles[0];
-    if (!file) {
-      return toast.error('Cannot upload your avatar!', {
-        autoClose: 1200,
-      });
-    }
-    setIsLoading(true);
-    try {
-      const uploadTask = storage
-        .ref(`avatars/${user?.email}/avatar/${file.name}`)
-        .put(file);
-      uploadTask.on(
-        'state_changed',
-        (snapshot) => {
-          const progress = Math.round(
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-          );
-          console.log(progress);
-        },
-        (error) => {
-          console.log(error);
-        },
-        () => {
-          storage
-            .ref(`avatars/${user?.email}/avatar/`)
-            .child(file.name)
-            .getDownloadURL()
-            .then(async (url) => {
-              updateAvatarUrl(url);
-              updateAvatar(url);
-            })
-            .catch((error) => {
-              console.log(error);
-            });
-        }
-      );
-    } catch (error) {
-      console.log(error);
-    }
+  const handleUploadAvatar = (file) => {
+    if (!file[0]) return;
+    const uploadTask = storage
+      .ref(`avatars/${user?.email}/avatar/${file[0].name}`)
+      .put(file[0]);
+    uploadTask.on(
+      'state_changed',
+      (snapshot) => {
+        const progress = Math.round(
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+        );
+        console.log(progress);
+      },
+      (error) => {
+        console.log(error);
+        setIsLoading(false);
+      },
+      () => {
+        storage
+          .ref(`avatars/${user?.email}/avatar/`)
+          .child(file[0].name)
+          .getDownloadURL()
+          .then((url) => {
+            updateAvatarToDb(url);
+            updateAvatarToFirebase(url);
+          })
+          .then(() => {
+            setTimeout(() => {
+              window.location.reload();
+            }, 1400);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+    );
   };
 
-  const { acceptedFiles, getRootProps, getInputProps, isDragActive } =
-    useDropzone({
-      accept: 'image/jpeg, image/png, image/jpg',
-      maxFiles: 1,
-      onDrop,
-    });
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    accept: 'image/jpeg, image/png, image/jpg',
+    maxFiles: 1,
+    multiple: false,
+    onDropAccepted: handleUploadAvatar,
+    onDropRejected: () => {
+      toast.error('File is not an image!', {
+        autoClose: 1200,
+      });
+    },
+  });
 
   useEffect(() => {
     const getUserProfile = async () => {
@@ -168,28 +175,105 @@ export default function ProfilePage() {
   };
 
   return (
-    <div>
-      <Stack spacing='0' direction={['column', 'row']}>
-        <Box flex='0'>
-          <ProfileInfoCard userProfile={userProfile} />
-        </Box>
+    <>
+      <Container maxW='container.xl'>
+        <Stack spacing='0' direction={['column', 'row']}>
+          <Box flex='0'>
+            <ProfileInfoCard userProfile={userProfile} />
+          </Box>
 
-        <Box flex='1'>
-          <ProfileTabs
-            userProfile={userProfile}
-            user={user}
-            onClickEditInfo={onClickEditInfo}
-            getRootProps={getRootProps}
-            getInputProps={getInputProps}
-            isDragActive={isDragActive}
-            isLoading={isLoading}
-            onClickChangePassword={onClickChangePassword}
-            showPassword={showPassword}
-            setShowPassword={setShowPassword}
-          />
-        </Box>
-      </Stack>
+          {userId === user?.uid && (
+            <Box flex='1'>
+              <ProfileTabs
+                userProfile={userProfile}
+                onClickEditInfo={onClickEditInfo}
+                getRootProps={getRootProps}
+                getInputProps={getInputProps}
+                isDragActive={isDragActive}
+                isLoading={isLoading}
+                onClickChangePassword={onClickChangePassword}
+                showPassword={showPassword}
+                setShowPassword={setShowPassword}
+              />
+            </Box>
+          )}
+        </Stack>
+        <Heading py='5' fontSize='33'>
+          Latest Recipe
+        </Heading>
+        <SimpleGrid
+          pt='5'
+          pb='5'
+          columns={{ base: 2, sm: 2, md: 3, lg: 4, xl: 5 }}
+          spacing={{ base: 2, sm: 7 }}>
+          <Box
+            maxW={{ base: '100%', sm: 'sm' }}
+            borderWidth='1px'
+            borderRadius='lg'
+            overflow='hidden'
+            _hover={{
+              boxShadow: '2xl',
+            }}>
+            <Box
+              h={{ base: '150px', sm: '300px' }}
+              bg={'gray.100'}
+              mt={-6}
+              mx={-6}
+              mb={{ base: '2', sm: '6' }}
+              pos={'relative'}>
+              <Image
+                height={{ base: '150px', sm: '300px' }}
+                loading='eager'
+                w={'full'}
+                src='https://images.immediate.co.uk/production/volatile/sites/30/2012/09/Beef-wellington-d4f3320.jpg'
+                objectFit={'cover'}
+                cursor='pointer'
+              />
+            </Box>
+            <Box px='4'>
+              <Text
+                color={'green.400'}
+                textTransform={'uppercase'}
+                fontWeight={{ base: 600, sm: 800 }}
+                fontSize={{ base: 'xs', sm: 'sm' }}
+                letterSpacing={1}
+                mb={{ base: 'xs', sm: '1.5' }}
+                cursor='pointer'>
+                asd
+              </Text>
+              <Box minheight='56px'>
+                <Heading
+                  display='block'
+                  color={useColorModeValue('gray.700', 'white')}
+                  fontSize={{ base: 'xs', sm: 'md', md: 'md' }}
+                  fontFamily={'body'}>
+                  asdssasihf
+                </Heading>
+              </Box>
+              <Divider orientation='horizontal' mt='2' mb='3' />
+              <Stack direction={'row'} justify={'center'} mb='2'>
+                <Stack flex={1} spacing={1} align={'center'}>
+                  <Text fontSize={{ base: 'xs', sm: 'sm' }} fontWeight={600}>
+                    asd
+                  </Text>
+                  <Text fontSize={{ base: 'xs', sm: 'sm' }} color={'red.300'}>
+                    Calories
+                  </Text>
+                </Stack>
+                <Stack flex={1} spacing={1} align={'center'}>
+                  <Text fontSize={{ base: 'xs', sm: 'sm' }} fontWeight={600}>
+                    asd
+                  </Text>
+                  <Text fontSize={{ base: 'xs', sm: 'sm' }} color={'red.300'}>
+                    Ingredients
+                  </Text>
+                </Stack>
+              </Stack>
+            </Box>
+          </Box>
+        </SimpleGrid>
+      </Container>
       <ToastContainer />
-    </div>
+    </>
   );
 }

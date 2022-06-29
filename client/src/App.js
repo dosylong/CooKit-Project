@@ -1,12 +1,14 @@
 import React, { useEffect } from 'react';
 import { ChakraProvider } from '@chakra-ui/react';
 import customTheme from './theme';
-import Auth from './features/Auth/index';
-import Profile from './features/Profile/index';
+import Auth from './features/Auth';
+import Profile from './features/Profile';
+import Recipe from './features/Recipe';
 import Layout from './layout';
 import './App.css';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { auth } from './firebase';
+import HomePage from './features/Home/pages/HomePage';
 
 function App() {
   useEffect(() => {
@@ -38,6 +40,8 @@ function App() {
 
           <Route path='/' element={<Layout />}>
             <Route path='profile/*' element={<Profile />} />
+            <Route path='recipe/*' element={<Recipe />} />
+            <Route path='/' element={<HomePage />} />
           </Route>
         </Routes>
       </BrowserRouter>

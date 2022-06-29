@@ -66,7 +66,9 @@ export default function RegisterForm(props) {
 
   return (
     <>
-      <Heading size='2xl'>Get's started</Heading>
+      <Heading fontSize='70' fontWeight='400'>
+        Get's started
+      </Heading>
 
       <Box py='3'>
         <Text color='gray.600'>

@@ -43,7 +43,9 @@ export default function LoginForm(props) {
 
   return (
     <>
-      <Heading size='2xl'>Welcome back</Heading>
+      <Heading fontSize='70' fontWeight='400'>
+        Welcome back
+      </Heading>
 
       <Box py='3'>
         <Text color='gray.600'>

@@ -11,9 +11,49 @@ datasource db {
 }
 
 model User {
-  userFirebaseId String  @id
-  email          String  @unique
+  userFirebaseId String   @id
+  email          String   @unique
   bio            String?
   fullName       String?
   photoURL       String?
+  recipe         Recipe[]
+}
+
+model Recipe {
+  id          Int          @id @default(autoincrement())
+  authorId    String?
+  difficultId Int?
+  categoryId  Int?
+  name        String?
+  description String?
+  instruction String?
+  prepTime    Int?
+  cookTime    Int?
+  imageCover  String?
+  recipeSlug  String?      @unique
+  createdAt   DateTime?    @default(now())
+  updatedAt   DateTime?    @default(now())
+  user        User?        @relation(fields: [authorId], references: [userFirebaseId], onDelete: Cascade)
+  difficult   Difficulty?  @relation(fields: [difficultId], references: [id])
+  ingredients Ingredient[]
+  categories  Category?    @relation(fields: [categoryId], references: [id])
+}
+
+model Difficulty {
+  id        Int      @id @default(autoincrement())
+  difficult String?
+  recipe    Recipe[]
+}
+
+model Ingredient {
+  id       Int     @id @default(autoincrement())
+  name     String?
+  recipeId Int?
+  recipe   Recipe? @relation(fields: [recipeId], references: [id])
+}
+
+model Category {
+  id     Int      @id @default(autoincrement())
+  name   String?
+  recipe Recipe[]
 }

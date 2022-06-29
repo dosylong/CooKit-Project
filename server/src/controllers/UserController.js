@@ -3,17 +3,6 @@ const prisma = require('../models/prisma');
 class UserController {
   createUser = async (req, res, next) => {
     try {
-      //Check email is exist or not
-      // const emailExist = await prisma.user.findUnique({
-      //   where: {
-      //     email: req.body.email,
-      //   },
-      // });
-
-      // if (emailExist) {
-      //   return res.status(400).json({ message: 'Email already exist' });
-      // }
-
       const response = await prisma.user.create({
         data: {
           userFirebaseId: req.body.userFirebaseId,
@@ -87,6 +76,15 @@ class UserController {
           photoURL: req.body.photoURL,
         },
       });
+      res.status(200).json(response);
+    } catch (error) {
+      return next(error);
+    }
+  };
+
+  getAllUser = async (req, res, next) => {
+    try {
+      const response = await prisma.user.findMany();
       res.status(200).json(response);
     } catch (error) {
       return next(error);

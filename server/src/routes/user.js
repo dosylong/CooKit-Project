@@ -17,4 +17,7 @@ router.post('/edit/profile', UserController.editUserProfile);
 //router PUT user/edit/avatar
 router.put('/edit/avatar', UserController.editUserAvatar);
 
+//router GET user/get/all
+router.get('/get/all', UserController.getAllUser);
+
 module.exports = router;

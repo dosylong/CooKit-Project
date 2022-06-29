@@ -35,7 +35,6 @@ export default function ProfileTabs(props) {
   const {
     userProfile,
     onClickEditInfo,
-    user,
     isLoading,
     getRootProps,
     getInputProps,
@@ -95,7 +94,7 @@ export default function ProfileTabs(props) {
         <Tabs variant='soft-rounded' colorScheme='green' isFitted>
           <TabList>
             <Tab>Manage Information</Tab>
-            <Tab>Change Password</Tab>
+            <Tab>Manage Password</Tab>
           </TabList>
           <TabPanels>
             <TabPanel>
@@ -183,9 +182,9 @@ export default function ProfileTabs(props) {
                                   objectFit: 'cover',
                                 }}
                                 src={
-                                  !user?.photoURL
-                                    ? 'https://avatars.dicebear.com/api/micah/69.svg'
-                                    : user?.photoURL
+                                  !userProfile?.photoURL
+                                    ? 'https://avatars.dicebear.com/api/big-smile/60.svg'
+                                    : userProfile?.photoURL
                                 }
                               />
 
