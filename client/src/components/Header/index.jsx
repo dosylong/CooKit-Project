@@ -45,6 +45,10 @@ export default function Header() {
     return navigate(`/profile/${user?.uid}`);
   };
 
+  const onPressAdminDashboard = () => {
+    return navigate(`/admin/dashboard`);
+  };
+
   const onPressCreateRecipe = () => {
     return navigate('/recipe/create');
   };
@@ -104,6 +108,10 @@ export default function Header() {
                 <Stack direction='row' spacing={7}>
                   <Button onClick={toggleColorMode}>
                     {colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
+                  </Button>
+
+                  <Button onClick={onPressAdminDashboard}>
+                    Admin dashboard
                   </Button>
 
                   <Menu autoSelect={false}>

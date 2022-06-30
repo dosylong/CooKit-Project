@@ -73,7 +73,7 @@ export default function Banner() {
         bgGradient={'linear(to-r, blackAlpha.400, transparent)'}>
         <Stack maxW={'2xl'} align={'flex-start'} spacing={6}>
           <Heading
-            color={'black'}
+            color={useColorModeValue('gray.800', 'gray.700')}
             fontWeight={400}
             lineHeight={1.2}
             fontSize={useBreakpointValue({ base: '60px', md: '65px' })}>
@@ -101,7 +101,7 @@ export default function Banner() {
               />
               <AutoCompleteList px='2'>
                 <Link to={`profile/${allUsers.userFirebaseId}`}>
-                  <AutoCompleteGroup title='Users' showDivider>
+                  <AutoCompleteGroup title='Users'>
                     {allUsers?.map((allUser) => (
                       <AutoCompleteItem
                         key={allUser.userFirebaseId}

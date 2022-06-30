@@ -9,8 +9,13 @@ import './App.css';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { auth } from './firebase';
 import HomePage from './features/Home/pages/HomePage';
+import Admin from './features/Admin';
 
 function App() {
+  const user = JSON.parse(localStorage.getItem('account'));
+
+  const isAdmin = process.env.REACT_APP_ADMIN_UID === user?.uid;
+
   useEffect(() => {
     const unregisterAuthObserver = auth.onAuthStateChanged(async (user) => {
       if (!user) {
@@ -20,14 +25,13 @@ function App() {
         const currentUser = auth.currentUser;
         if (currentUser) {
           console.log('Logged in user: ', currentUser);
+
           localStorage.setItem('account', JSON.stringify(currentUser));
         }
       }
     });
     return () => unregisterAuthObserver();
   }, []);
-
-  const user = localStorage.getItem('account');
 
   return (
     <ChakraProvider theme={customTheme}>
@@ -38,6 +42,10 @@ function App() {
             element={!user ? <Auth /> : <Navigate to='/' replace />}
           />
 
+          <Route
+            path='admin/*'
+            element={!isAdmin ? <Navigate to='/' replace /> : <Admin />}
+          />
           <Route path='/' element={<Layout />}>
             <Route path='profile/*' element={<Profile />} />
             <Route path='recipe/*' element={<Recipe />} />
