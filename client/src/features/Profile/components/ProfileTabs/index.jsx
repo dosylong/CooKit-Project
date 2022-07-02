@@ -19,7 +19,6 @@ import {
   Avatar,
   Stack,
   Text,
-  Spinner,
   Center,
   InputRightElement,
 } from '@chakra-ui/react';
@@ -30,6 +29,8 @@ import * as yup from 'yup';
 import { FiUploadCloud } from 'react-icons/fi';
 import { RiLockPasswordFill } from 'react-icons/ri';
 import { FaRegEye, FaRegEyeSlash } from 'react-icons/fa';
+import { CircularProgress } from '@chakra-ui/react';
+import { CircularProgressLabel } from '@chakra-ui/react';
 
 export default function ProfileTabs(props) {
   const {
@@ -42,6 +43,7 @@ export default function ProfileTabs(props) {
     onClickChangePassword,
     showPassword,
     setShowPassword,
+    imgProgress,
   } = props;
   const initialProfileValues = {
     bio: userProfile.bio,
@@ -172,7 +174,7 @@ export default function ProfileTabs(props) {
 
                         <FormControl>
                           <FormLabel htmlFor='avatar' fontWeight='bold'>
-                            Your avatar
+                            Avatar
                           </FormLabel>
                           <InputGroup>
                             <Stack direction='row' spacing={10}>
@@ -219,7 +221,13 @@ export default function ProfileTabs(props) {
 
                                   {isLoading ? (
                                     <Center>
-                                      <Spinner />
+                                      <CircularProgress
+                                        value={imgProgress}
+                                        color='green.400'>
+                                        <CircularProgressLabel>
+                                          {imgProgress}%
+                                        </CircularProgressLabel>
+                                      </CircularProgress>
                                     </Center>
                                   ) : isDragActive ? (
                                     <Text>Drop the image here...</Text>

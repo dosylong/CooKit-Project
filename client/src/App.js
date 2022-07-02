@@ -8,7 +8,7 @@ import Layout from './layout';
 import './App.css';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { auth } from './firebase';
-import HomePage from './features/Home/pages/HomePage';
+import Home from './features/Home/pages/HomePage';
 import Admin from './features/Admin';
 
 function App() {
@@ -25,7 +25,6 @@ function App() {
         const currentUser = auth.currentUser;
         if (currentUser) {
           console.log('Logged in user: ', currentUser);
-
           localStorage.setItem('account', JSON.stringify(currentUser));
         }
       }
@@ -46,15 +45,24 @@ function App() {
             path='admin/*'
             element={!isAdmin ? <Navigate to='/' replace /> : <Admin />}
           />
-          <Route path='/' element={<Layout />}>
+          <Route path='/' element={isAdmin ? <AdminRoute /> : <Layout />}>
             <Route path='profile/*' element={<Profile />} />
             <Route path='recipe/*' element={<Recipe />} />
-            <Route path='/' element={<HomePage />} />
+            <Route path='/' element={<Home />} />
           </Route>
         </Routes>
       </BrowserRouter>
     </ChakraProvider>
   );
+}
+
+function AdminRoute() {
+  const user = JSON.parse(localStorage.getItem('account'));
+  const isAdmin = process.env.REACT_APP_ADMIN_UID === user?.uid;
+
+  if (isAdmin) {
+    return <Navigate to='/admin/dashboard' replace />;
+  }
 }
 
 export default App;

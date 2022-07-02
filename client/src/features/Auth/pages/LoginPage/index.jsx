@@ -15,14 +15,10 @@ export default function LoginPage() {
 
   const onPressLoginGoogle = async () => {
     try {
-      await auth
-        .signInWithRedirect(provider)
-        .then((result) => {
-          console.log(result);
-        })
-        .then(() => {
-          window.location.pathname = '/';
-        });
+      await auth.signInWithRedirect(provider).then((result) => {
+        console.log(result);
+        window.location.pathname = '/';
+      });
     } catch (error) {
       if (error) {
         toast.error(error);
@@ -31,7 +27,7 @@ export default function LoginPage() {
   };
 
   // useEffect(() => {
-  //   if (user) return;
+  //   if (!user) return;
   //   try {
   //     const createUser = async () => {
   //       const response = await userApi.createUser({
@@ -59,7 +55,7 @@ export default function LoginPage() {
       }, 800);
     } catch (error) {
       if (error.code === 'auth/wrong-password') {
-        toast.error('Please check your Password again!');
+        toast.error('Your password is incorrect.');
       }
       if (error.code === 'auth/user-not-found') {
         toast.error('Account not found!');

@@ -15,16 +15,27 @@ import {
   InputLeftElement,
   Stack,
   Text,
-  VStack,
   Box,
   Image,
   Textarea,
+  Grid,
+  CircularProgress,
+  CircularProgressLabel,
 } from '@chakra-ui/react';
 import { BsClipboardCheck } from 'react-icons/bs';
 import { FiUploadCloud } from 'react-icons/fi';
+import { GridItem } from '@chakra-ui/react';
 
 export default function CreateRecipeForm(props) {
-  const { onCreateRecipe, getRootProps, getInputProps, file } = props;
+  const {
+    onCreateRecipe,
+    getRootProps,
+    getInputProps,
+    file,
+    isDragActive,
+    isLoading,
+    imgProgress,
+  } = props;
 
   const initialValues = {
     name: '',
@@ -74,172 +85,274 @@ export default function CreateRecipeForm(props) {
           isSubmitting,
         }) => (
           <Form>
-            <VStack spacing='10'>
-              <FormControl
-                isRequired
-                isInvalid={errors.name && touched.name}
-                pt='5'>
-                <FormLabel htmlFor='name' fontWeight='bold'>
-                  Recipe Name
-                </FormLabel>
-                <InputGroup>
-                  <InputLeftElement
-                    pointerEvents='none'
-                    children={<BsClipboardCheck color='gray' />}
-                  />
-                  <Input
-                    id='name'
+            <Grid
+              h='200px'
+              templateRows='repeat(2, 1fr)'
+              templateColumns='repeat(2, 1fr)'
+              gap={10}>
+              <HStack>
+                <GridItem colSpan={2}>
+                  <FormControl>
+                    <FormLabel htmlFor='avatar' fontWeight='bold'>
+                      Image Cover
+                    </FormLabel>
+                    <InputGroup>
+                      <Stack direction='row' spacing={10}>
+                        <Flex
+                          w={620}
+                          h={100}
+                          justify='center'
+                          align='center'
+                          p={20}
+                          m={0}
+                          borderRadius={10}
+                          sx={{
+                            border: '1px dashed',
+                          }}
+                          textAlign='center'
+                          {...getRootProps()}>
+                          <input {...getInputProps()} />
+                          <Stack direction='column'>
+                            <Center>
+                              <Center
+                                sx={{
+                                  borderRadius: '50',
+                                  boxSize: '50',
+                                  bg: '#92e6a7',
+                                }}>
+                                <FiUploadCloud size={30} color='#004b23' />
+                              </Center>
+                            </Center>
+
+                            {isLoading ? (
+                              <Center>
+                                <CircularProgress
+                                  value={imgProgress}
+                                  color='green.400'>
+                                  <CircularProgressLabel>
+                                    {imgProgress}%
+                                  </CircularProgressLabel>
+                                </CircularProgress>
+                              </Center>
+                            ) : isDragActive ? (
+                              <Text>Drop the image here...</Text>
+                            ) : (
+                              <>
+                                <Text>
+                                  Drag 'n' drop some image here, or click to
+                                  select image
+                                </Text>
+                                <Text as='em'>
+                                  (Only *.jpeg, *.jpg and *.png image will be
+                                  accepted)
+                                </Text>
+                              </>
+                            )}
+                          </Stack>
+                        </Flex>
+                      </Stack>
+                    </InputGroup>
+                  </FormControl>
+                </GridItem>
+
+                <GridItem colSpan={2}>
+                  <FormControl>
+                    <Box
+                      maxW='md'
+                      p='2'
+                      borderWidth='1px'
+                      borderRadius='lg'
+                      overflow='hidden'>
+                      {file.map((file, index) => (
+                        <Image
+                          key={index}
+                          src={file.preview}
+                          alt='recipe'
+                          w={'full'}
+                          objectFit={'cover'}
+                          height={{ base: '150px', sm: '300px' }}
+                        />
+                      ))}
+                    </Box>
+                  </FormControl>
+                </GridItem>
+              </HStack>
+
+              <GridItem rowSpan={2} colSpan={1}>
+                <FormControl
+                  isRequired
+                  isInvalid={errors.name && touched.name}
+                  pt='5'>
+                  <FormLabel htmlFor='name' fontWeight='bold'>
+                    Recipe Name
+                  </FormLabel>
+                  <InputGroup>
+                    <InputLeftElement
+                      pointerEvents='none'
+                      children={<BsClipboardCheck color='gray' />}
+                    />
+                    <Input
+                      id='name'
+                      w='40%'
+                      type='text'
+                      placeholder='Recipe Name'
+                      onChange={handleChange}
+                      value={values.name}
+                      focusBorderColor='green.400'
+                      sx={{
+                        borderRadius: '9px',
+                      }}
+                    />
+                  </InputGroup>
+                  <FormErrorMessage>{errors.name}</FormErrorMessage>
+                </FormControl>
+              </GridItem>
+
+              <GridItem colSpan={2}>
+                <FormControl
+                  isRequired
+                  isInvalid={errors.description && touched.description}>
+                  <FormLabel htmlFor='description' fontWeight='bold'>
+                    Recipe Description
+                  </FormLabel>
+
+                  <Textarea
+                    id='description'
                     w='40%'
                     type='text'
-                    placeholder='Recipe Name'
+                    placeholder='Recipe Description'
                     onChange={handleChange}
-                    value={values.name}
+                    value={values.description}
                     focusBorderColor='green.400'
                     sx={{
                       borderRadius: '9px',
                     }}
                   />
-                </InputGroup>
-                <FormErrorMessage>{errors.name}</FormErrorMessage>
-              </FormControl>
+                  <FormErrorMessage>{errors.description}</FormErrorMessage>
+                </FormControl>
+              </GridItem>
 
-              <FormControl
-                isRequired
-                isInvalid={errors.description && touched.description}>
-                <FormLabel htmlFor='description' fontWeight='bold'>
-                  Recipe Description
-                </FormLabel>
-
-                <Textarea
-                  id='description'
-                  w='40%'
-                  type='text'
-                  placeholder='Recipe Description'
-                  onChange={handleChange}
-                  value={values.description}
-                  focusBorderColor='green.400'
-                  sx={{
-                    borderRadius: '9px',
-                  }}
-                />
-                <FormErrorMessage>{errors.description}</FormErrorMessage>
-              </FormControl>
-
-              <FormControl
-                isRequired
-                isInvalid={errors.ingredients && touched.ingredients}>
-                <FieldArray
-                  name='ingredients'
-                  render={(arrayHelpers) => (
-                    <div>
-                      {values.ingredients &&
-                        values.ingredients.length > 0 &&
-                        values.ingredients.map((ingredient, index) => (
-                          <Stack
-                            key={index}
-                            direction='column'
-                            spacing={2}
-                            sx={{ mt: 2 }}>
-                            <FormLabel htmlFor='ingredient' fontWeight='bold'>
-                              Ingredient
-                            </FormLabel>
-                            <HStack>
-                              <Input
-                                w='40%'
-                                id='ingredients'
-                                name={`ingredients[${index}].name`}
-                                value={ingredient.name}
-                                label='Ingredient Name'
-                                placeholder='Ingredient'
-                                focusBorderColor='green.400'
-                                onChange={handleChange}
-                                sx={{
-                                  borderRadius: '9px',
-                                }}
-                              />
-                              <Stack direction='row' spacing={2}>
-                                {values.ingredients.length > 1 && (
+              <GridItem colSpan={2}>
+                <FormControl
+                  isRequired
+                  isInvalid={errors.ingredients && touched.ingredients}>
+                  <FieldArray
+                    name='ingredients'
+                    render={(arrayHelpers) => (
+                      <div>
+                        {values.ingredients &&
+                          values.ingredients.length > 0 &&
+                          values.ingredients.map((ingredient, index) => (
+                            <Stack
+                              key={index}
+                              direction='column'
+                              spacing={2}
+                              sx={{ mt: 2 }}>
+                              <FormLabel htmlFor='ingredient' fontWeight='bold'>
+                                Ingredient
+                              </FormLabel>
+                              <HStack>
+                                <Input
+                                  w='40%'
+                                  id='ingredients'
+                                  name={`ingredients[${index}].name`}
+                                  value={ingredient.name}
+                                  label='Ingredient Name'
+                                  placeholder='Ingredient'
+                                  focusBorderColor='green.400'
+                                  onChange={handleChange}
+                                  sx={{
+                                    borderRadius: '9px',
+                                  }}
+                                />
+                                <Stack direction='row' spacing={2}>
+                                  {values.ingredients.length > 1 && (
+                                    <Button
+                                      onClick={() =>
+                                        arrayHelpers.remove(index)
+                                      }>
+                                      -
+                                    </Button>
+                                  )}
                                   <Button
-                                    onClick={() => arrayHelpers.remove(index)}>
-                                    -
+                                    onClick={() =>
+                                      arrayHelpers.push({
+                                        name: '',
+                                      })
+                                    }>
+                                    +
                                   </Button>
-                                )}
-                                <Button
-                                  onClick={() =>
-                                    arrayHelpers.push({
-                                      name: '',
-                                    })
-                                  }>
-                                  +
-                                </Button>
-                              </Stack>
-                            </HStack>
-                          </Stack>
-                        ))}
-                    </div>
-                  )}
-                />
-                <FormErrorMessage>{errors.ingredients}</FormErrorMessage>
-              </FormControl>
+                                </Stack>
+                              </HStack>
+                            </Stack>
+                          ))}
+                      </div>
+                    )}
+                  />
+                  <FormErrorMessage>{errors.ingredients}</FormErrorMessage>
+                </FormControl>
+              </GridItem>
 
-              <FormControl>
-                <Stack direction='row' spacing={-600}>
-                  <FormControl
-                    isRequired
-                    isInvalid={errors.prepTime && touched.prepTime}>
-                    <FormLabel htmlFor='prepTime' fontWeight='bold'>
-                      Prep Time (mins)
-                    </FormLabel>
-                    <InputGroup>
-                      <InputLeftElement
-                        pointerEvents='none'
-                        children={<BsClipboardCheck color='gray' />}
-                      />
-                      <Input
-                        id='prepTime'
-                        w='30%'
-                        type='number'
-                        min={1}
-                        placeholder='Prep Time'
-                        onChange={handleChange}
-                        value={values.prepTime}
-                        focusBorderColor='green.400'
-                        sx={{
-                          borderRadius: '9px',
-                        }}
-                      />
-                    </InputGroup>
-                    <FormErrorMessage>{errors.prepTime}</FormErrorMessage>
-                  </FormControl>
+              <GridItem colSpan={2}>
+                <FormControl>
+                  <Stack direction='row' spacing={-600}>
+                    <FormControl
+                      isRequired
+                      isInvalid={errors.prepTime && touched.prepTime}>
+                      <FormLabel htmlFor='prepTime' fontWeight='bold'>
+                        Prep Time (mins)
+                      </FormLabel>
+                      <InputGroup>
+                        <InputLeftElement
+                          pointerEvents='none'
+                          children={<BsClipboardCheck color='gray' />}
+                        />
+                        <Input
+                          id='prepTime'
+                          w='30%'
+                          type='number'
+                          min={1}
+                          placeholder='Prep Time'
+                          onChange={handleChange}
+                          value={values.prepTime}
+                          focusBorderColor='green.400'
+                          sx={{
+                            borderRadius: '9px',
+                          }}
+                        />
+                      </InputGroup>
+                      <FormErrorMessage>{errors.prepTime}</FormErrorMessage>
+                    </FormControl>
 
-                  <FormControl
-                    isRequired
-                    isInvalid={errors.cookTime && touched.cookTime}>
-                    <FormLabel htmlFor='cookTime' fontWeight='bold'>
-                      Cook Time (mins)
-                    </FormLabel>
-                    <InputGroup>
-                      <InputLeftElement
-                        pointerEvents='none'
-                        children={<BsClipboardCheck color='gray' />}
-                      />
-                      <Input
-                        id='cookTime'
-                        w='30%'
-                        type='number'
-                        placeholder='Cook Time'
-                        onChange={handleChange}
-                        value={values.cookTime}
-                        focusBorderColor='green.400'
-                        sx={{
-                          borderRadius: '9px',
-                        }}
-                      />
-                    </InputGroup>
-                    <FormErrorMessage>{errors.cookTime}</FormErrorMessage>
-                  </FormControl>
-                </Stack>
-              </FormControl>
+                    <FormControl
+                      isRequired
+                      isInvalid={errors.cookTime && touched.cookTime}>
+                      <FormLabel htmlFor='cookTime' fontWeight='bold'>
+                        Cook Time (mins)
+                      </FormLabel>
+                      <InputGroup>
+                        <InputLeftElement
+                          pointerEvents='none'
+                          children={<BsClipboardCheck color='gray' />}
+                        />
+                        <Input
+                          id='cookTime'
+                          w='30%'
+                          type='number'
+                          placeholder='Cook Time'
+                          onChange={handleChange}
+                          value={values.cookTime}
+                          focusBorderColor='green.400'
+                          sx={{
+                            borderRadius: '9px',
+                          }}
+                        />
+                      </InputGroup>
+                      <FormErrorMessage>{errors.cookTime}</FormErrorMessage>
+                    </FormControl>
+                  </Stack>
+                </FormControl>
+              </GridItem>
 
               {/* <FormControl
                 isRequired
@@ -256,96 +369,30 @@ export default function CreateRecipeForm(props) {
                 </Select>
               </FormControl> */}
 
-              <FormControl
-                isRequired
-                isInvalid={errors.instruction && touched.instruction}>
-                <FormLabel htmlFor='instruction' fontWeight='bold'>
-                  Recipe Instructions
-                </FormLabel>
+              <GridItem colSpan={2}>
+                <FormControl
+                  isRequired
+                  isInvalid={errors.instruction && touched.instruction}>
+                  <FormLabel htmlFor='instruction' fontWeight='bold'>
+                    Recipe Instructions
+                  </FormLabel>
 
-                <Textarea
-                  id='instruction'
-                  w='40%'
-                  type='text'
-                  placeholder='Recipe Instruction'
-                  onChange={handleChange}
-                  value={values.instruction}
-                  focusBorderColor='green.400'
-                  sx={{
-                    borderRadius: '9px',
-                  }}
-                />
+                  <Textarea
+                    id='instruction'
+                    w='40%'
+                    type='text'
+                    placeholder='Recipe Instruction'
+                    onChange={handleChange}
+                    value={values.instruction}
+                    focusBorderColor='green.400'
+                    sx={{
+                      borderRadius: '9px',
+                    }}
+                  />
 
-                <FormErrorMessage>{errors.instruction}</FormErrorMessage>
-              </FormControl>
-
-              <FormControl>
-                <FormLabel htmlFor='avatar' fontWeight='bold'>
-                  Image Cover
-                </FormLabel>
-                <InputGroup>
-                  <Stack direction='row' spacing={10}>
-                    <Flex
-                      w={620}
-                      h={100}
-                      justify='center'
-                      align='center'
-                      p={20}
-                      m={2}
-                      borderRadius={10}
-                      sx={{
-                        border: '1px dashed',
-                      }}
-                      textAlign='center'
-                      {...getRootProps()}>
-                      <input {...getInputProps()} />
-                      <Stack direction='column'>
-                        <Center>
-                          <Center
-                            sx={{
-                              borderRadius: '50',
-                              boxSize: '50',
-                              bg: '#92e6a7',
-                            }}>
-                            <FiUploadCloud size={30} color='#004b23' />
-                          </Center>
-                        </Center>
-
-                        <>
-                          <Text>
-                            Drag 'n' drop some image here, or click to select
-                            image
-                          </Text>
-                          <Text as='em'>
-                            (Only *.jpeg, *.jpg and *.png image will be
-                            accepted)
-                          </Text>
-                        </>
-                      </Stack>
-                    </Flex>
-                  </Stack>
-                </InputGroup>
-              </FormControl>
-
-              <FormControl>
-                <Box
-                  maxW='md'
-                  p='2'
-                  borderWidth='1px'
-                  borderRadius='lg'
-                  overflow='hidden'>
-                  {file.map((file, index) => (
-                    <Image
-                      key={index}
-                      src={file.preview}
-                      alt='recipe'
-                      w={'full'}
-                      objectFit={'cover'}
-                      height={{ base: '150px', sm: '300px' }}
-                    />
-                  ))}
-                </Box>
-              </FormControl>
+                  <FormErrorMessage>{errors.instruction}</FormErrorMessage>
+                </FormControl>
+              </GridItem>
 
               <Button
                 w='50%'
@@ -360,7 +407,7 @@ export default function CreateRecipeForm(props) {
                 onClick={handleSubmit}>
                 Create Recipe
               </Button>
-            </VStack>
+            </Grid>
           </Form>
         )}
       </Formik>

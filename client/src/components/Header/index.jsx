@@ -34,7 +34,9 @@ export default function Header() {
   //const [userProfile, setUserProfile] = useState({});
   const user = JSON.parse(localStorage.getItem('account'));
 
-  const onPressSignOut = async () => {
+  const isAdmin = process.env.REACT_APP_ADMIN_UID === user?.uid;
+
+  const onPressLogOut = async () => {
     await auth.signOut().then(() => {
       localStorage.clear();
       window.location.href = '/';
@@ -109,10 +111,11 @@ export default function Header() {
                   <Button onClick={toggleColorMode}>
                     {colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
                   </Button>
-
-                  <Button onClick={onPressAdminDashboard}>
-                    Admin dashboard
-                  </Button>
+                  {isAdmin ? (
+                    <Button onClick={onPressAdminDashboard}>
+                      Admin dashboard
+                    </Button>
+                  ) : null}
 
                   <Menu autoSelect={false}>
                     <MenuButton
@@ -158,32 +161,36 @@ export default function Header() {
 
                       <MenuDivider />
 
-                      <MenuItem onClick={onPressProfile}>
-                        <Stack direction='row' spacing={1}>
-                          <Box py='1'>
-                            <FiUser />
-                          </Box>
-                          <Box>Profile</Box>
-                        </Stack>
-                      </MenuItem>
+                      {!isAdmin && (
+                        <>
+                          <MenuItem onClick={onPressProfile}>
+                            <Stack direction='row' spacing={1}>
+                              <Box py='1'>
+                                <FiUser />
+                              </Box>
+                              <Box>Profile</Box>
+                            </Stack>
+                          </MenuItem>
 
-                      <MenuItem onClick={onPressCreateRecipe}>
-                        <Stack direction='row' spacing={1}>
-                          <Box py='1'>
-                            <GiForkKnifeSpoon />
-                          </Box>
-                          <Box>Create new Recipe</Box>
-                        </Stack>
-                      </MenuItem>
+                          <MenuItem onClick={onPressCreateRecipe}>
+                            <Stack direction='row' spacing={1}>
+                              <Box py='1'>
+                                <GiForkKnifeSpoon />
+                              </Box>
+                              <Box>Create new Recipe</Box>
+                            </Stack>
+                          </MenuItem>
 
-                      <Divider />
+                          <Divider />
+                        </>
+                      )}
 
-                      <MenuItem onClick={onPressSignOut}>
+                      <MenuItem onClick={onPressLogOut}>
                         <Stack direction='row' spacing={1}>
                           <Box py='1'>
                             <FiLogOut />
                           </Box>
-                          <Box>Logout</Box>
+                          <Box>Log Out</Box>
                         </Stack>
                       </MenuItem>
                     </MenuList>

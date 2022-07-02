@@ -24,6 +24,7 @@ export default function ProfilePage() {
   const { userId } = useParams();
   const [userProfile, setUserProfile] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [imgProgress, setImgProgress] = useState(0);
   const [showPassword, setShowPassword] = useState(false);
 
   const user = JSON.parse(localStorage.getItem('account'));
@@ -43,10 +44,10 @@ export default function ProfilePage() {
         photoURL: url,
       })
       .then(() => {
-        toast.success('Edited avatar successfully!', {
+        toast.success('Changed avatar successfully!', {
           autoClose: 1200,
         });
-        console.log('Updated avatar successfully!');
+        console.log('Changed avatar successfully!');
       })
       .catch((error) => {
         console.log(error);
@@ -64,6 +65,8 @@ export default function ProfilePage() {
         const progress = Math.round(
           (snapshot.bytesTransferred / snapshot.totalBytes) * 100
         );
+        setIsLoading(true);
+        setImgProgress(progress);
         console.log(progress);
       },
       (error) => {
@@ -126,7 +129,7 @@ export default function ProfilePage() {
           bio: values.bio,
         })
         .then(() => {
-          toast.success('Edited profile successfully!', {
+          toast.success('Changed profile successfully!', {
             autoClose: 1200,
           });
         });
@@ -135,15 +138,16 @@ export default function ProfilePage() {
         .updateProfile({
           displayName: values.fullName,
         })
-        .then((user) => {
-          console.log(user);
+        .then(() => {
+          console.log('New displayName:', auth.currentUser.displayName);
+          console.log('New bio:', values.bio);
         })
         .catch((error) => {
           console.log(error);
         });
       setTimeout(() => {
         window.location.reload();
-      }, 1400);
+      }, 1300);
     } catch (error) {
       console.log(error);
     }
@@ -158,7 +162,7 @@ export default function ProfilePage() {
       await auth.currentUser.reauthenticateWithCredential(credentials);
 
       await auth.currentUser.updatePassword(values.newPassword).then(() => {
-        toast.success('Edited password successfully!', {
+        toast.success('Changed password successfully!', {
           autoClose: 1200,
         });
       });
@@ -194,6 +198,7 @@ export default function ProfilePage() {
                 onClickChangePassword={onClickChangePassword}
                 showPassword={showPassword}
                 setShowPassword={setShowPassword}
+                imgProgress={imgProgress}
               />
             </Box>
           )}

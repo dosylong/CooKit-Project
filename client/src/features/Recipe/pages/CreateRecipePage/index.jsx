@@ -8,6 +8,8 @@ import { useNavigate } from 'react-router-dom';
 
 export default function CreateRecipePage() {
   const [file, setFile] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [imgProgress, setImgProgress] = useState(0);
   const user = JSON.parse(localStorage.getItem('account'));
   const navigate = useNavigate();
 
@@ -36,10 +38,13 @@ export default function CreateRecipePage() {
           const progress = Math.round(
             (snapshot.bytesTransferred / snapshot.totalBytes) * 100
           );
+          setImgProgress(progress);
           console.log(progress);
+          setIsLoading(true);
         },
         (error) => {
           console.log(error);
+          setIsLoading(false);
         },
         () => {
           storage
@@ -88,6 +93,8 @@ export default function CreateRecipePage() {
           isDragActive={isDragActive}
           file={file}
           onCreateRecipe={onCreateRecipe}
+          isLoading={isLoading}
+          imgProgress={imgProgress}
         />
       </Container>
     </>
