@@ -90,93 +90,91 @@ export default function CreateRecipeForm(props) {
               templateRows='repeat(2, 1fr)'
               templateColumns='repeat(2, 1fr)'
               gap={10}>
-              <HStack>
-                <GridItem colSpan={2}>
-                  <FormControl>
-                    <FormLabel htmlFor='avatar' fontWeight='bold'>
-                      Image Cover
-                    </FormLabel>
-                    <InputGroup>
-                      <Stack direction='row' spacing={10}>
-                        <Flex
-                          w={620}
-                          h={100}
-                          justify='center'
-                          align='center'
-                          p={20}
-                          m={0}
-                          borderRadius={10}
-                          sx={{
-                            border: '1px dashed',
-                          }}
-                          textAlign='center'
-                          {...getRootProps()}>
-                          <input {...getInputProps()} />
-                          <Stack direction='column'>
-                            <Center>
-                              <Center
-                                sx={{
-                                  borderRadius: '50',
-                                  boxSize: '50',
-                                  bg: '#92e6a7',
-                                }}>
-                                <FiUploadCloud size={30} color='#004b23' />
-                              </Center>
+              <GridItem colSpan={2}>
+                <FormControl>
+                  <FormLabel htmlFor='avatar' fontWeight='bold'>
+                    Image Cover
+                  </FormLabel>
+                  <InputGroup>
+                    <Stack direction='row' spacing={10}>
+                      <Flex
+                        w={620}
+                        h={100}
+                        justify='center'
+                        align='center'
+                        p={20}
+                        m={0}
+                        borderRadius={10}
+                        sx={{
+                          border: '1px dashed',
+                        }}
+                        textAlign='center'
+                        {...getRootProps()}>
+                        <input {...getInputProps()} />
+                        <Stack direction='column'>
+                          <Center>
+                            <Center
+                              sx={{
+                                borderRadius: '50',
+                                boxSize: '50',
+                                bg: '#92e6a7',
+                              }}>
+                              <FiUploadCloud size={30} color='#004b23' />
                             </Center>
+                          </Center>
 
-                            {isLoading ? (
-                              <Center>
-                                <CircularProgress
-                                  value={imgProgress}
-                                  color='green.400'>
-                                  <CircularProgressLabel>
-                                    {imgProgress}%
-                                  </CircularProgressLabel>
-                                </CircularProgress>
-                              </Center>
-                            ) : isDragActive ? (
-                              <Text>Drop the image here...</Text>
-                            ) : (
-                              <>
-                                <Text>
-                                  Drag 'n' drop some image here, or click to
-                                  select image
-                                </Text>
-                                <Text as='em'>
-                                  (Only *.jpeg, *.jpg and *.png image will be
-                                  accepted)
-                                </Text>
-                              </>
-                            )}
-                          </Stack>
-                        </Flex>
-                      </Stack>
-                    </InputGroup>
-                  </FormControl>
-                </GridItem>
+                          {isLoading ? (
+                            <Center>
+                              <CircularProgress
+                                value={imgProgress}
+                                color='green.400'>
+                                <CircularProgressLabel>
+                                  {imgProgress}%
+                                </CircularProgressLabel>
+                              </CircularProgress>
+                            </Center>
+                          ) : isDragActive ? (
+                            <Text>Drop the image here...</Text>
+                          ) : (
+                            <>
+                              <Text>
+                                Drag 'n' drop some image here, or click to
+                                select image
+                              </Text>
+                              <Text as='em'>
+                                (Only *.jpeg, *.jpg and *.png image will be
+                                accepted)
+                              </Text>
+                            </>
+                          )}
+                        </Stack>
+                      </Flex>
+                    </Stack>
+                  </InputGroup>
+                </FormControl>
+              </GridItem>
 
-                <GridItem colSpan={2}>
-                  <FormControl>
-                    <Box
-                      maxW='md'
-                      p='2'
-                      borderWidth='1px'
-                      borderRadius='lg'
-                      overflow='hidden'>
-                      {file.map((file, index) => (
-                        <Image
-                          key={index}
-                          src={file.preview}
-                          alt='recipe'
-                          w={'full'}
-                          objectFit={'cover'}
-                          height={{ base: '150px', sm: '300px' }}
-                        />
-                      ))}
-                    </Box>
-                  </FormControl>
-                </GridItem>
-              </HStack>
+              <GridItem colSpan={2}>
+                <FormControl>
+                  <Box
+                    maxW='md'
+                    p='2'
+                    borderWidth='1px'
+                    borderRadius='lg'
+                    overflow='hidden'>
+                    {file.map((file, index) => (
+                      <Image
+                        key={index}
+                        src={file.preview}
+                        alt='recipe'
+                        w={'full'}
+                        objectFit={'cover'}
+                        height={{ base: '150px', sm: '300px' }}
+                      />
+                    ))}
+                  </Box>
+                </FormControl>
+              </GridItem>
 
               <GridItem rowSpan={2} colSpan={1}>
                 <FormControl

@@ -2,8 +2,8 @@ const UserController = require('../controllers/UserController');
 const express = require('express');
 const router = express.Router();
 
-//router GET user/email/check
-router.get('/email/check', UserController.checkUserEmail);
+//router GET user/check
+router.get('/check', UserController.checkUserExist);
 
 //router GET user/profile
 router.get('/profile', UserController.getUserProfile);
@@ -19,5 +19,8 @@ router.put('/edit/avatar', UserController.editUserAvatar);
 
 //router GET user/get/all
 router.get('/get/all', UserController.getAllUser);
+
+//router GET user/email/check
+router.get('/email/check', UserController.checkUserEmail);
 
 module.exports = router;

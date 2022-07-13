@@ -7,6 +7,7 @@ class UserController {
         data: {
           userFirebaseId: req.body.userFirebaseId,
           email: req.body.email,
+          username: req.body.username,
           fullName: req.body.fullName,
           bio: req.body.bio,
         },
@@ -25,10 +26,24 @@ class UserController {
           userFirebaseId: req.query.userFirebaseId,
         },
       });
-      if (!response) {
-        return res.status(404).json({ message: 'User not found' });
-      }
       res.status(200).json(response);
+    } catch (error) {
+      return next(error);
+    }
+  };
+
+  checkUserExist = async (req, res, next) => {
+    try {
+      const response = await prisma.user.findUnique({
+        where: {
+          userFirebaseId: req.query.userFirebaseId,
+        },
+      });
+      if (response) {
+        return res.status(200).json({ message: 'user-found' });
+      } else {
+        return res.status(200).json({ message: 'user-not-found' });
+      }
     } catch (error) {
       return next(error);
     }
@@ -42,7 +57,7 @@ class UserController {
         },
       });
       if (response) {
-        return res.status(200).json({ message: 'Email already exist' });
+        return res.status(200).json({ message: 'email-exist' });
       }
     } catch (error) {
       return next(error);

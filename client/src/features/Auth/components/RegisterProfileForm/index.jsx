@@ -17,16 +17,9 @@ import { Formik, Form } from 'formik';
 import * as yup from 'yup';
 import React from 'react';
 import { Link } from 'react-router-dom';
-import Step from '../../../../components/Step';
 
-export default function RegisterInfoForm(props) {
-  const {
-    prevStep,
-    activeStep,
-    formInfoData,
-    setFormInfoData,
-    onClickSubmitInfoForm,
-  } = props;
+export default function RegisterProfileForm(props) {
+  const { formInfoData, setFormInfoData, onClickSubmitInfoForm } = props;
 
   const initialValues = {
     username: formInfoData.username,
@@ -67,12 +60,6 @@ export default function RegisterInfoForm(props) {
         <Text color='gray.600'>
           Just fill some fields left and you can start to explore
         </Text>
-      </Box>
-
-      <Step activeStep={1} />
-
-      <Box py='5'>
-        <Box w='full' borderTopWidth='2px' h='3px' borderTopColor='gray.200' />
       </Box>
 
       <Formik
@@ -183,33 +170,9 @@ export default function RegisterInfoForm(props) {
                 onClick={handleSubmit}>
                 Register
               </Button>
-
-              <Button
-                w='full'
-                variant='ghost'
-                colorScheme='green'
-                sx={{
-                  borderRadius: '9px',
-                }}
-                isDisabled={activeStep === 0}
-                onClick={prevStep}>
-                Prev Step
-              </Button>
             </VStack>
 
             <Box py='4'>
-              <HStack>
-                <Text>Already have an account?</Text>
-                <Link to='/account/login'>
-                  <Text
-                    color='green.500'
-                    fontWeight='bold'
-                    _hover={{ textDecoration: 'underline' }}>
-                    Log in.
-                  </Text>
-                </Link>
-              </HStack>
-
               <HStack py='2'>
                 <Text>Back to</Text>
                 <Link to='/'>

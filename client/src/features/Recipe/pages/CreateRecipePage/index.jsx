@@ -5,6 +5,8 @@ import { useDropzone } from 'react-dropzone';
 import recipeApi from '../../../../api/recipeApi';
 import { storage } from '../../../../firebase';
 import { useNavigate } from 'react-router-dom';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function CreateRecipePage() {
   const [file, setFile] = useState([]);
@@ -21,52 +23,81 @@ export default function CreateRecipePage() {
     console.log(response);
   };
 
-  const onCreateRecipe = async (values) => {
-    try {
-      const response = await recipeApi.createRecipe({
-        authorId: user?.uid,
-        ...values,
-      });
+  // const onCreateRecipe = async (values) => {
+  //   try {
+  //     const response = await recipeApi.createRecipe({
+  //       authorId: user?.uid,
+  //       ...values,
+  //     });
 
-      console.log(response);
-      const uploadTask = storage
-        .ref(`recipes/${user?.email}/recipe/${file[0].name}`)
-        .put(file[0]);
-      uploadTask.on(
-        'state_changed',
-        (snapshot) => {
-          const progress = Math.round(
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-          );
-          setImgProgress(progress);
-          console.log(progress);
-          setIsLoading(true);
-        },
-        (error) => {
-          console.log(error);
+  //     console.log(response);
+  //     const uploadTask = storage
+  //       .ref(`recipes/${user?.email}/recipe/${file[0].name}`)
+  //       .put(file[0]);
+  //     uploadTask.on(
+  //       'state_changed',
+  //       (snapshot) => {
+  //         const progress = Math.round(
+  //           (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+  //         );
+  //         setImgProgress(progress);
+  //         console.log('Upload is ' + progress + '% done');
+  //         setIsLoading(true);
+  //       },
+  //       (error) => {
+  //         console.log(error);
+  //         setIsLoading(false);
+  //       },
+  //       () => {
+  //         storage
+  //           .ref(`recipes/${user?.email}/recipe/`)
+  //           .child(file[0].name)
+  //           .getDownloadURL()
+  //           .then((url) => {
+  //             onCreateRecipeImage(url);
+  //           })
+  //           .then(() => {
+  //             setTimeout(() => {
+  //               navigate('/');
+  //             }, 1400);
+  //           })
+  //           .catch((error) => {
+  //             console.log(error);
+  //           });
+  //       }
+  //     );
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+
+  const onLoadingImg = (file) => {
+    if (!file[0]) return;
+    const uploadTask = storage
+      .ref(`recipes/${user?.email}/recipe/${file[0].name}`)
+      .put(file[0]);
+    uploadTask.on(
+      'state_changed',
+      (snapshot) => {
+        const progress = Math.round(
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+        );
+        setImgProgress(progress);
+        console.log('Upload is ' + progress + '% done');
+        setIsLoading(true);
+        if (progress === 100) {
           setIsLoading(false);
-        },
-        () => {
-          storage
-            .ref(`recipes/${user?.email}/recipe/`)
-            .child(file[0].name)
-            .getDownloadURL()
-            .then((url) => {
-              onCreateRecipeImage(url);
-            })
-            .then(() => {
-              setTimeout(() => {
-                navigate('/');
-              }, 1400);
-            })
-            .catch((error) => {
-              console.log(error);
-            });
         }
-      );
-    } catch (error) {
-      console.log(error);
-    }
+      },
+      (error) => {
+        console.log(error);
+        setIsLoading(false);
+      }
+    );
+  };
+
+  const onCreateRecipe = (file) => {
+    onLoadingImg(file);
   };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -82,6 +113,12 @@ export default function CreateRecipePage() {
         )
       );
     },
+    onDropRejected: () => {
+      toast.error('File is not an image!', {
+        autoClose: 1200,
+      });
+    },
+    onDropAccepted: onCreateRecipe,
   });
 
   return (
@@ -97,6 +134,7 @@ export default function CreateRecipePage() {
           imgProgress={imgProgress}
         />
       </Container>
+      <ToastContainer />
     </>
   );
 }

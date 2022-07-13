@@ -19,12 +19,12 @@ export default function HomeContent(props) {
     <>
       <Container maxW='container.xl'>
         <Banner />
-        <Heading py='5' fontSize='50' fontWeight='400'>
+        <Heading py='5' fontSize='50' fontWeight='600'>
           Categories
         </Heading>
         <SimpleGrid
-          pt='5'
-          pb='5'
+          pt='1'
+          pb='3'
           columns={{ base: 2, sm: 1, md: 2, lg: 3, xl: 4 }}
           spacing={{ base: 2, sm: 7 }}>
           <Box
@@ -93,7 +93,7 @@ export default function HomeContent(props) {
           </Box>
         </SimpleGrid>
 
-        <Heading py='5' fontSize='50' fontWeight='400'>
+        <Heading py='5' fontSize='50' fontWeight='600'>
           Latest Recipe
         </Heading>
         <SimpleGrid

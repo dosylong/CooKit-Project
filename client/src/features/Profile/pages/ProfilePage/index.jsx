@@ -67,7 +67,10 @@ export default function ProfilePage() {
         );
         setIsLoading(true);
         setImgProgress(progress);
-        console.log(progress);
+        console.log('Upload is ' + progress + '% done');
+        if (progress === 100) {
+          setIsLoading(false);
+        }
       },
       (error) => {
         console.log(error);
@@ -246,13 +249,13 @@ export default function ProfilePage() {
                 cursor='pointer'>
                 asd
               </Text>
-              <Box minheight='56px'>
+              <Box minH='56px'>
                 <Heading
                   display='block'
                   color={useColorModeValue('gray.700', 'white')}
                   fontSize={{ base: 'xs', sm: 'md', md: 'md' }}
                   fontFamily={'body'}>
-                  asdssasihf
+                  ad
                 </Heading>
               </Box>
               <Divider orientation='horizontal' mt='2' mb='3' />

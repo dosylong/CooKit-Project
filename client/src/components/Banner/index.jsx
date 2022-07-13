@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Stack,
   Flex,
@@ -26,7 +26,7 @@ import recipeApi from '../../api/recipeApi';
 export default function Banner() {
   const [allUsers, setAllUsers] = useState([]);
   const [allRecipes, setAllRecipes] = useState([]);
-  //const user = JSON.parse(localStorage.getItem('account'));
+  const user = useRef(JSON.parse(localStorage.getItem('account')));
 
   useEffect(() => {
     const getAllUser = async () => {
@@ -73,8 +73,8 @@ export default function Banner() {
         bgGradient={'linear(to-r, blackAlpha.400, transparent)'}>
         <Stack maxW={'2xl'} align={'flex-start'} spacing={6}>
           <Heading
-            color={useColorModeValue('gray.800', 'gray.700')}
-            fontWeight={400}
+            color={useColorModeValue('gray.800', 'gray.900')}
+            fontWeight={600}
             lineHeight={1.2}
             fontSize={useBreakpointValue({ base: '60px', md: '65px' })}>
             Find a Recipe
@@ -100,11 +100,11 @@ export default function Banner() {
                 }}
               />
               <AutoCompleteList px='2'>
-                <Link to={`profile/${allUsers.userFirebaseId}`}>
+                <Link to={`profile/${allUsers?.username}`}>
                   <AutoCompleteGroup title='Users'>
                     {allUsers?.map((allUser) => (
                       <AutoCompleteItem
-                        key={allUser.userFirebaseId}
+                        key={allUser.username}
                         value={allUser.fullName}
                         textTransform='capitalize'
                         my='2'

@@ -5,7 +5,6 @@ import {
   FormControl,
   FormErrorMessage,
   FormLabel,
-  Heading,
   HStack,
   Input,
   InputGroup,
@@ -43,13 +42,13 @@ export default function LoginForm(props) {
 
   return (
     <>
-      <Heading fontSize='70' fontWeight='400'>
+      <Text fontSize='55' fontWeight='700'>
         Welcome back
-      </Heading>
+      </Text>
 
       <Box py='3'>
-        <Text color='gray.600'>
-          Enter your credentials to access your account.
+        <Text color='gray.600' fontWeight='700'>
+          Enter your credentials to access your account
         </Text>
       </Box>
 
@@ -103,7 +102,7 @@ export default function LoginForm(props) {
         onSubmit={(values) => {
           onPressLogin(values);
           return new Promise((resolve) => {
-            setTimeout(resolve, 1200);
+            setTimeout(resolve, 1400);
           });
         }}>
         {({
@@ -147,13 +146,18 @@ export default function LoginForm(props) {
                   <FormLabel htmlFor='password' fontWeight='bold'>
                     Password
                   </FormLabel>
-                  <Text
-                    color='green.500'
-                    fontWeight='bold'
-                    fontSize='14px'
-                    _hover={{ textDecoration: 'underline', cursor: 'pointer' }}>
-                    Forgot password?
-                  </Text>
+                  <Link to='/account/forgot-password'>
+                    <Text
+                      color='green.500'
+                      fontWeight='bold'
+                      fontSize='14px'
+                      _hover={{
+                        textDecoration: 'underline',
+                        cursor: 'pointer',
+                      }}>
+                      Forgot password?
+                    </Text>
+                  </Link>
                 </HStack>
                 <InputGroup>
                   <InputLeftElement
@@ -169,6 +173,7 @@ export default function LoginForm(props) {
                     focusBorderColor='green.400'
                     sx={{
                       borderRadius: '9px',
+                      fontWeight: 'thin',
                     }}
                   />
                   <InputRightElement>
@@ -214,6 +219,18 @@ export default function LoginForm(props) {
                     fontWeight='bold'
                     _hover={{ textDecoration: 'underline' }}>
                     Register.
+                  </Text>
+                </Link>
+              </HStack>
+
+              <HStack py='2'>
+                <Text>Back to</Text>
+                <Link to='/'>
+                  <Text
+                    color='green.500'
+                    fontWeight='bold'
+                    _hover={{ textDecoration: 'underline' }}>
+                    Home.
                   </Text>
                 </Link>
               </HStack>

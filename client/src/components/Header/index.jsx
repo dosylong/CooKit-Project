@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Box,
   Flex,
@@ -25,16 +25,16 @@ import { FiLogOut } from 'react-icons/fi';
 import { FiUser } from 'react-icons/fi';
 import { IoIosArrowDown } from 'react-icons/io';
 import { GiForkKnifeSpoon } from 'react-icons/gi';
-//import userApi from '../../api/userApi';
+import userApi from '../../api/userApi';
 
 export default function Header() {
   const { colorMode, toggleColorMode } = useColorMode();
   //const { isOpen, onOpen, onClose } = useDisclosure();
   const navigate = useNavigate();
-  //const [userProfile, setUserProfile] = useState({});
-  const user = JSON.parse(localStorage.getItem('account'));
+  const [userProfile, setUserProfile] = useState({});
+  const user = useRef(JSON.parse(localStorage.getItem('account')));
 
-  const isAdmin = process.env.REACT_APP_ADMIN_UID === user?.uid;
+  //const isAdmin = process.env.REACT_APP_ADMIN_UID === user?.uid;
 
   const onPressLogOut = async () => {
     await auth.signOut().then(() => {
@@ -44,12 +44,12 @@ export default function Header() {
   };
 
   const onPressProfile = () => {
-    return navigate(`/profile/${user?.uid}`);
+    return navigate(`/profile/${user.current?.uid}`);
   };
 
-  const onPressAdminDashboard = () => {
-    return navigate(`/admin/dashboard`);
-  };
+  // const onPressAdminDashboard = () => {
+  //   return navigate(`/admin/dashboard`);
+  // };
 
   const onPressCreateRecipe = () => {
     return navigate('/recipe/create');
@@ -63,20 +63,20 @@ export default function Header() {
     }
   }, [isLoggedIn]);
 
-  // useEffect(() => {
-  //   const getUserProfile = async () => {
-  //     if (!user) return;
-  //     try {
-  //       const response = await userApi.getUserProfile({
-  //         userFirebaseId: user?.uid,
-  //       });
-  //       setUserProfile(response);
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   };
-  //   getUserProfile();
-  // }, [user]);
+  useEffect(() => {
+    const getUserProfile = async () => {
+      if (!user.current) return;
+      try {
+        const response = await userApi.getUserProfile({
+          userFirebaseId: user.current?.uid,
+        });
+        setUserProfile(response);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getUserProfile();
+  }, []);
 
   return (
     <>
@@ -111,11 +111,11 @@ export default function Header() {
                   <Button onClick={toggleColorMode}>
                     {colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
                   </Button>
-                  {isAdmin ? (
+                  {/* {isAdmin ? (
                     <Button onClick={onPressAdminDashboard}>
                       Admin dashboard
                     </Button>
-                  ) : null}
+                  ) : null} */}
 
                   <Menu autoSelect={false}>
                     <MenuButton
@@ -127,9 +127,9 @@ export default function Header() {
                         <Avatar
                           size='sm'
                           src={
-                            !user?.photoURL
+                            !userProfile?.photoURL
                               ? 'https://avatars.dicebear.com/api/big-smile/60.svg'
-                              : user?.photoURL
+                              : userProfile?.photoURL
                           }
                         />
 
@@ -140,50 +140,50 @@ export default function Header() {
                     </MenuButton>
 
                     <MenuList alignItems='center' spacing={7}>
-                      <Center>
+                      <Center pt='5' pb='3'>
                         <Avatar
                           size='2xl'
                           src={
-                            !user?.photoURL
+                            !userProfile?.photoURL
                               ? 'https://avatars.dicebear.com/api/big-smile/60.svg'
-                              : user?.photoURL
+                              : userProfile?.photoURL
                           }
                         />
                       </Center>
 
-                      <Center h='50px'>
-                        {user ? (
-                          <Stack direction='row' spacing={1}>
-                            <Text fontWeight='bold'>{user?.displayName}</Text>
-                          </Stack>
-                        ) : null}
+                      <Center h='40px'>
+                        <Stack direction='row' spacing={1}>
+                          <Text fontWeight='bold'>
+                            {userProfile.fullName
+                              ? userProfile.fullName
+                              : user.current?.email}
+                          </Text>
+                        </Stack>
                       </Center>
 
                       <MenuDivider />
 
-                      {!isAdmin && (
-                        <>
-                          <MenuItem onClick={onPressProfile}>
-                            <Stack direction='row' spacing={1}>
-                              <Box py='1'>
-                                <FiUser />
-                              </Box>
-                              <Box>Profile</Box>
-                            </Stack>
-                          </MenuItem>
+                      <>
+                        <MenuItem onClick={onPressProfile}>
+                          <Stack direction='row' spacing={1}>
+                            <Box py='1'>
+                              <FiUser />
+                            </Box>
+                            <Box>Profile</Box>
+                          </Stack>
+                        </MenuItem>
 
-                          <MenuItem onClick={onPressCreateRecipe}>
-                            <Stack direction='row' spacing={1}>
-                              <Box py='1'>
-                                <GiForkKnifeSpoon />
-                              </Box>
-                              <Box>Create new Recipe</Box>
-                            </Stack>
-                          </MenuItem>
+                        <MenuItem onClick={onPressCreateRecipe}>
+                          <Stack direction='row' spacing={1}>
+                            <Box py='1'>
+                              <GiForkKnifeSpoon />
+                            </Box>
+                            <Box>Create new Recipe</Box>
+                          </Stack>
+                        </MenuItem>
 
-                          <Divider />
-                        </>
-                      )}
+                        <Divider />
+                      </>
 
                       <MenuItem onClick={onPressLogOut}>
                         <Stack direction='row' spacing={1}>

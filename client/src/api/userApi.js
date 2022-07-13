@@ -25,6 +25,10 @@ const userApi = {
     const url = 'user/get/all';
     return axiosClient.get(url);
   },
+  checkUserExist: (params) => {
+    const url = 'user/check';
+    return axiosClient.get(url, { params });
+  },
 };
 
 export default userApi;

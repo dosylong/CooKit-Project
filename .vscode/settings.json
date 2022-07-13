@@ -6,7 +6,9 @@
     "Dropzone",
     "fontsource",
     "Formik",
+    "rufina",
     "semibold",
-    "signup"
+    "signup",
+    "toastify"
   ]
 }

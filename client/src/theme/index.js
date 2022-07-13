@@ -1,6 +1,6 @@
 import { extendTheme } from '@chakra-ui/react';
-import '@fontsource/lobster/400.css';
-import '@fontsource/inter/400.css';
+import '@fontsource/rufina/700.css';
+import '@fontsource/quicksand/600.css';
 import { StepsStyleConfig as Steps } from 'chakra-ui-steps';
 
 const config = {
@@ -10,8 +10,8 @@ const config = {
 
 const customTheme = extendTheme({
   fonts: {
-    body: 'Inter, system-ui, sans-serif',
-    heading: 'Lobster, system-ui, sans-serif',
+    body: 'Quicksand, sans-serif',
+    heading: 'Rufina, sans-serif',
   },
   components: {
     Steps,

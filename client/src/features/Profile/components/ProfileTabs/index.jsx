@@ -135,7 +135,7 @@ export default function ProfileTabs(props) {
                               id='fullName'
                               type='text'
                               placeholder='Full Name'
-                              value={values.fullName}
+                              value={values.fullName || ''}
                               onChange={handleChange}
                               focusBorderColor='green.400'
                               sx={{
@@ -161,7 +161,7 @@ export default function ProfileTabs(props) {
                               id='bio'
                               type='text'
                               placeholder='Bio'
-                              value={values.bio}
+                              value={values.bio || ''}
                               onChange={handleChange}
                               focusBorderColor='green.400'
                               sx={{

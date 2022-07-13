@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { ChakraProvider } from '@chakra-ui/react';
 import customTheme from './theme';
 import Auth from './features/Auth';
@@ -6,15 +6,23 @@ import Profile from './features/Profile';
 import Recipe from './features/Recipe';
 import Layout from './layout';
 import './App.css';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+  useNavigate,
+} from 'react-router-dom';
 import { auth } from './firebase';
 import Home from './features/Home/pages/HomePage';
 import Admin from './features/Admin';
+import NotFound from './components/NotFound';
+import userApi from './api/userApi';
 
 function App() {
-  const user = JSON.parse(localStorage.getItem('account'));
+  const user = useRef(JSON.parse(localStorage.getItem('account')));
 
-  const isAdmin = process.env.REACT_APP_ADMIN_UID === user?.uid;
+  const isAdmin = process.env.REACT_APP_ADMIN_UID === user.current?.uid;
 
   useEffect(() => {
     const unregisterAuthObserver = auth.onAuthStateChanged(async (user) => {
@@ -36,20 +44,39 @@ function App() {
     <ChakraProvider theme={customTheme}>
       <BrowserRouter>
         <Routes>
+          {/* <Route
+            path='account/*'
+            element={!user.current ? <Auth /> : <Navigate to='/' replace />}
+          /> */}
           <Route
             path='account/*'
-            element={!user ? <Auth /> : <Navigate to='/' replace />}
+            element={
+              <ProtectedRoute>
+                <Auth />
+              </ProtectedRoute>
+            }
           />
 
           <Route
             path='admin/*'
             element={!isAdmin ? <Navigate to='/' replace /> : <Admin />}
           />
-          <Route path='/' element={isAdmin ? <AdminRoute /> : <Layout />}>
+          <Route
+            path='/'
+            element={
+              isAdmin ? (
+                <AdminRoute />
+              ) : (
+                <ProtectedRoute>
+                  <Layout />
+                </ProtectedRoute>
+              )
+            }>
             <Route path='profile/*' element={<Profile />} />
             <Route path='recipe/*' element={<Recipe />} />
             <Route path='/' element={<Home />} />
           </Route>
+          <Route path='*' element={<NotFound />} />
         </Routes>
       </BrowserRouter>
     </ChakraProvider>
@@ -63,6 +90,33 @@ function AdminRoute() {
   if (isAdmin) {
     return <Navigate to='/admin/dashboard' replace />;
   }
+}
+
+function ProtectedRoute({ children }) {
+  const user = useRef(JSON.parse(localStorage.getItem('account')));
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const checkUserProfile = async () => {
+      if (!user.current) return;
+      try {
+        const response = await userApi.checkUserExist({
+          userFirebaseId: user.current?.uid,
+        });
+        if (response.message === 'user-not-found') {
+          return navigate('/account/register-profile');
+        }
+
+        if (response.message === 'user-found') {
+          return navigate('/');
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    return () => checkUserProfile();
+  }, [navigate]);
+  return children;
 }
 
 export default App;

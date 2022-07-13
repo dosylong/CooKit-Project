@@ -1,5 +1,4 @@
 import {
-  Heading,
   Text,
   HStack,
   FormControl,
@@ -66,13 +65,13 @@ export default function RegisterForm(props) {
 
   return (
     <>
-      <Heading fontSize='70' fontWeight='400'>
+      <Text fontSize='55' fontWeight='700'>
         Get's started
-      </Heading>
+      </Text>
 
-      <Box py='3'>
-        <Text color='gray.600'>
-          Let's get you all set up in order to find your favorite recipe.
+      <Box py='3' pb='7'>
+        <Text color='gray.600' fontWeight='700'>
+          Get access to exclusive features by creating an account
         </Text>
       </Box>
 
@@ -230,6 +229,18 @@ export default function RegisterForm(props) {
                     fontWeight='bold'
                     _hover={{ textDecoration: 'underline' }}>
                     Log in.
+                  </Text>
+                </Link>
+              </HStack>
+
+              <HStack py='2'>
+                <Text>Back to</Text>
+                <Link to='/'>
+                  <Text
+                    color='green.500'
+                    fontWeight='bold'
+                    _hover={{ textDecoration: 'underline' }}>
+                    Home.
                   </Text>
                 </Link>
               </HStack>
