@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ChakraProvider } from '@chakra-ui/react';
 import customTheme from './theme';
 import Auth from './features/Auth';
@@ -21,6 +21,7 @@ import userApi from './api/userApi';
 
 function App() {
   const user = useRef(JSON.parse(localStorage.getItem('account')));
+  const [userProfile, setUserProfile] = useState({});
 
   const isAdmin = process.env.REACT_APP_ADMIN_UID === user.current?.uid;
 
@@ -40,6 +41,21 @@ function App() {
     return () => unregisterAuthObserver();
   }, []);
 
+  useEffect(() => {
+    const getUserProfile = async () => {
+      if (!user.current) return;
+      try {
+        const response = await userApi.getUserProfile({
+          userFirebaseId: user.current?.uid,
+        });
+        setUserProfile(response);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getUserProfile();
+  }, []);
+
   return (
     <ChakraProvider theme={customTheme}>
       <BrowserRouter>
@@ -51,9 +67,11 @@ function App() {
           <Route
             path='account/*'
             element={
-              <ProtectedRoute>
+              userProfile.userFirebaseId ? (
+                <Navigate to='/' replace />
+              ) : (
                 <Auth />
-              </ProtectedRoute>
+              )
             }
           />
 
@@ -103,18 +121,18 @@ function ProtectedRoute({ children }) {
         const response = await userApi.checkUserExist({
           userFirebaseId: user.current?.uid,
         });
-        if (response.message === 'user-not-found') {
+        console.log(response.message);
+        if (response.message === 'user-profile-not-found') {
           return navigate('/account/register-profile');
         }
-
-        if (response.message === 'user-found') {
-          return navigate('/');
-        }
+        // if (response.message === 'user-profile-found') {
+        //   return navigate('/');
+        //
       } catch (error) {
         console.log(error);
       }
     };
-    return () => checkUserProfile();
+    checkUserProfile();
   }, [navigate]);
   return children;
 }

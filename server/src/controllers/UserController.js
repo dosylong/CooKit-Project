@@ -3,6 +3,32 @@ const prisma = require('../models/prisma');
 class UserController {
   createUser = async (req, res, next) => {
     try {
+      //check username  is exist or not
+      const usernameExist = await prisma.user.findUnique({
+        where: {
+          username: req.body.username,
+        },
+      });
+
+      if (usernameExist) {
+        return res.status(200).json({
+          message: 'username-exist',
+        });
+      }
+
+      //check email  is exist or not
+      const emailExist = await prisma.user.findUnique({
+        where: {
+          email: req.body.email,
+        },
+      });
+
+      if (emailExist) {
+        return res.status(200).json({
+          message: 'email-exist',
+        });
+      }
+
       const response = await prisma.user.create({
         data: {
           userFirebaseId: req.body.userFirebaseId,
@@ -40,24 +66,9 @@ class UserController {
         },
       });
       if (response) {
-        return res.status(200).json({ message: 'user-found' });
+        return res.status(200).json({ message: 'user-profile-found' });
       } else {
-        return res.status(200).json({ message: 'user-not-found' });
-      }
-    } catch (error) {
-      return next(error);
-    }
-  };
-
-  checkUserEmail = async (req, res, next) => {
-    try {
-      const response = await prisma.user.findUnique({
-        where: {
-          email: req.query.email,
-        },
-      });
-      if (response) {
-        return res.status(200).json({ message: 'email-exist' });
+        return res.status(200).json({ message: 'user-profile-not-found' });
       }
     } catch (error) {
       return next(error);

@@ -20,7 +20,4 @@ router.put('/edit/avatar', UserController.editUserAvatar);
 //router GET user/get/all
 router.get('/get/all', UserController.getAllUser);
 
-//router GET user/email/check
-router.get('/email/check', UserController.checkUserEmail);
-
 module.exports = router;

@@ -45,34 +45,34 @@ export default function RegisterPage() {
 
   const onClickSubmitInfoForm = async (values) => {
     try {
-      await userApi
-        .createUser({
-          userFirebaseId: auth.currentUser.uid,
-          email: auth.currentUser.email,
-          username: values.username,
-          fullName: values.fullName,
-          bio: values.bio,
-        })
-        .then(() => {
-          toast.success('Registered successfully!', {
-            autoClose: 1200,
+      const response = await userApi.createUser({
+        userFirebaseId: auth.currentUser.uid,
+        email: auth.currentUser.email,
+        username: values.username,
+        fullName: values.fullName,
+        bio: values.bio,
+      });
+
+      if (response.message === 'username-exist') {
+        toast.error(`${values.username} already in use!`);
+      } else {
+        await auth.currentUser
+          .updateProfile({
+            displayName: values.fullName,
+          })
+          .then(() => {
+            console.log('Display Name: ', auth.currentUser.displayName);
+          })
+          .catch((error) => {
+            console.log(error);
           });
+        toast.success('Registered successfully!', {
+          autoClose: 1200,
         });
-
-      await auth.currentUser
-        .updateProfile({
-          displayName: values.fullName,
-        })
-        .then(() => {
-          console.log('Display Name: ', auth.currentUser.displayName);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-
-      setTimeout(() => {
-        window.location.pathname = '/';
-      }, 1400);
+        setTimeout(() => {
+          window.location.pathname = '/';
+        }, 1400);
+      }
     } catch (error) {
       if (error.code === 'auth/email-already-in-use') {
         toast.error('This Email already in use!');
