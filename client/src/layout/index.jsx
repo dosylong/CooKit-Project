@@ -8,7 +8,7 @@ export default function Layout() {
   return (
     <>
       <Header />
-      <Container maxW='1370px'>
+      <Container maxW='1370px' position='relative' zIndex='0'>
         <Box minH='100vh' maxH='auto' py='20' minW='auto' maxW='auto'>
           <Outlet />
         </Box>

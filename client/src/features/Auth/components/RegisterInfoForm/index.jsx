@@ -198,18 +198,6 @@ export default function RegisterInfoForm(props) {
             </VStack>
 
             <Box py='4'>
-              <HStack>
-                <Text>Already have an account?</Text>
-                <Link to='/account/login'>
-                  <Text
-                    color='green.500'
-                    fontWeight='bold'
-                    _hover={{ textDecoration: 'underline' }}>
-                    Log in.
-                  </Text>
-                </Link>
-              </HStack>
-
               <HStack py='2'>
                 <Text>Back to</Text>
                 <Link to='/'>

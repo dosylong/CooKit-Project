@@ -35,6 +35,7 @@ export default function CreateRecipeForm(props) {
     isDragActive,
     isLoading,
     imgProgress,
+    onClickRemoveImage,
   } = props;
 
   const initialValues = {
@@ -49,6 +50,7 @@ export default function CreateRecipeForm(props) {
     ],
     prepTime: '',
     cookTime: '',
+    imageCover: '',
   };
 
   const recipeSchema = yup.object().shape({
@@ -58,6 +60,7 @@ export default function CreateRecipeForm(props) {
     ingredients: yup.array().required('Ingredients is required'),
     prepTime: yup.string().required('Prep time is required'),
     cookTime: yup.string().required('Cook time is required'),
+    imageCover: yup.string().required('Image is required'),
   });
 
   const handleCreateRecipe = (values) => {
@@ -91,7 +94,9 @@ export default function CreateRecipeForm(props) {
               templateColumns='repeat(2, 1fr)'
               gap={10}>
               <GridItem colSpan={2}>
-                <FormControl>
+                <FormControl
+                  isRequired
+                  isInvalid={errors.imageCover && touched.imageCover}>
                   <FormLabel htmlFor='avatar' fontWeight='bold'>
                     Image Cover
                   </FormLabel>
@@ -172,8 +177,14 @@ export default function CreateRecipeForm(props) {
                         height={{ base: '150px', sm: '300px' }}
                       />
                     ))}
+                    <Flex justify='flex-end'>
+                      <Button my='2' onClick={() => onClickRemoveImage()}>
+                        <BsClipboardCheck size={20} />
+                      </Button>
+                    </Flex>
                   </Box>
                 </FormControl>
+                <FormErrorMessage>{errors.imageCover}</FormErrorMessage>
               </GridItem>
 
               <GridItem rowSpan={2} colSpan={1}>

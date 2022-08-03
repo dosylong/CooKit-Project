@@ -10,6 +10,7 @@ import {
   Divider,
   Image,
   useColorModeValue,
+  Center,
 } from '@chakra-ui/react';
 import RecipeCard from '../../../Recipe/components/RecipeCard';
 
@@ -20,7 +21,7 @@ export default function HomeContent(props) {
       <Container maxW='container.xl'>
         <Banner />
         <Heading py='5' fontSize='50' fontWeight='600'>
-          Categories
+          <Center>Categories</Center>
         </Heading>
         <SimpleGrid
           pt='1'
@@ -94,7 +95,7 @@ export default function HomeContent(props) {
         </SimpleGrid>
 
         <Heading py='5' fontSize='50' fontWeight='600'>
-          Latest Recipe
+          <Center>Latest Recipe</Center>
         </Heading>
         <SimpleGrid
           pt='5'

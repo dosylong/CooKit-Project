@@ -1,11 +1,10 @@
 var firebase = require('firebase-admin');
 
-var serviceAccount = require('D://Cookit-Private-Key/cookit-private-key.json');
+var serviceAccount = require('../../cookit-private-key.json');
 
 firebase.initializeApp({
   credential: firebase.credential.cert(serviceAccount),
-  databaseURL:
-    'https://cookit-project-default-rtdb.asia-southeast1.firebasedatabase.app',
+  databaseURL: process.env.FIREBASE_DATABASE_URL,
 });
 
 module.exports = firebase;

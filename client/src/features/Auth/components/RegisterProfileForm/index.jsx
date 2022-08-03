@@ -17,6 +17,7 @@ import { Formik, Form } from 'formik';
 import * as yup from 'yup';
 import React from 'react';
 import { Link } from 'react-router-dom';
+import Step from '../../../../components/Step';
 
 export default function RegisterProfileForm(props) {
   const { formInfoData, setFormInfoData, onClickSubmitInfoForm } = props;
@@ -60,6 +61,11 @@ export default function RegisterProfileForm(props) {
         <Text color='gray.600'>
           Just fill some fields left and you can start to explore
         </Text>
+      </Box>
+      <Step activeStep={1} />
+
+      <Box py='5'>
+        <Box w='full' borderTopWidth='2px' h='3px' borderTopColor='gray.200' />
       </Box>
 
       <Formik

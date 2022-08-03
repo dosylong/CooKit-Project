@@ -132,7 +132,7 @@ export default function ProfilePage() {
           bio: values.bio,
         })
         .then(() => {
-          toast.success('Changed profile successfully!', {
+          toast.success('Changed information successfully!', {
             autoClose: 1200,
           });
         });

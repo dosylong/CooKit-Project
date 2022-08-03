@@ -90,6 +90,7 @@ export default function Header() {
         backdropFilter='saturate(180%) blur(5px)'
         sx={{
           position: 'fixed',
+          zIndex: '1',
         }}>
         <Container maxW='container.xl'>
           <Flex h='16' alignItems='center' justifyContent='space-between'>

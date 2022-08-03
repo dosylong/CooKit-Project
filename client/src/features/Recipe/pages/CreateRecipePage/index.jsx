@@ -1,5 +1,5 @@
 import { Container } from '@chakra-ui/react';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import CreateRecipeForm from '../../components/CreateRecipeForm';
 import { useDropzone } from 'react-dropzone';
 import recipeApi from '../../../../api/recipeApi';
@@ -12,92 +12,97 @@ export default function CreateRecipePage() {
   const [file, setFile] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [imgProgress, setImgProgress] = useState(0);
-  const user = JSON.parse(localStorage.getItem('account'));
+  const user = useRef(JSON.parse(localStorage.getItem('account')));
   const navigate = useNavigate();
 
   const onCreateRecipeImage = async (url) => {
     const response = await recipeApi.createRecipeImage({
-      authorId: user?.uid,
+      authorId: user.current?.uid,
       imageCover: url,
     });
     console.log(response);
   };
 
-  // const onCreateRecipe = async (values) => {
-  //   try {
-  //     const response = await recipeApi.createRecipe({
-  //       authorId: user?.uid,
-  //       ...values,
-  //     });
+  const onCreateRecipe = async (values, file) => {
+    try {
+      const response = await recipeApi.createRecipe({
+        authorId: user.current?.uid,
+        ...values,
+        imageCover: file[0].name,
+      });
 
-  //     console.log(response);
-  //     const uploadTask = storage
-  //       .ref(`recipes/${user?.email}/recipe/${file[0].name}`)
-  //       .put(file[0]);
-  //     uploadTask.on(
-  //       'state_changed',
-  //       (snapshot) => {
-  //         const progress = Math.round(
-  //           (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-  //         );
-  //         setImgProgress(progress);
-  //         console.log('Upload is ' + progress + '% done');
-  //         setIsLoading(true);
-  //       },
-  //       (error) => {
-  //         console.log(error);
-  //         setIsLoading(false);
-  //       },
-  //       () => {
-  //         storage
-  //           .ref(`recipes/${user?.email}/recipe/`)
-  //           .child(file[0].name)
-  //           .getDownloadURL()
-  //           .then((url) => {
-  //             onCreateRecipeImage(url);
-  //           })
-  //           .then(() => {
-  //             setTimeout(() => {
-  //               navigate('/');
-  //             }, 1400);
-  //           })
-  //           .catch((error) => {
-  //             console.log(error);
-  //           });
-  //       }
-  //     );
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
-  const onLoadingImg = (file) => {
-    if (!file[0]) return;
-    const uploadTask = storage
-      .ref(`recipes/${user?.email}/recipe/${file[0].name}`)
-      .put(file[0]);
-    uploadTask.on(
-      'state_changed',
-      (snapshot) => {
-        const progress = Math.round(
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-        );
-        setImgProgress(progress);
-        console.log('Upload is ' + progress + '% done');
-        setIsLoading(true);
-        if (progress === 100) {
+      console.log(response);
+      const uploadTask = storage
+        .ref(`recipes/${user.current?.email}/recipe/${file[0].name}`)
+        .put(file[0]);
+      uploadTask.on(
+        'state_changed',
+        (snapshot) => {
+          const progress = Math.round(
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+          );
+          setImgProgress(progress);
+          console.log('Upload is ' + progress + '% done');
+          setIsLoading(true);
+        },
+        (error) => {
+          console.log(error);
           setIsLoading(false);
+        },
+        () => {
+          storage
+            .ref(`recipes/${user.current?.email}/recipe/`)
+            .child(file[0].name)
+            .getDownloadURL()
+            .then((url) => {
+              onCreateRecipeImage(url);
+            })
+            .then(() => {
+              setTimeout(() => {
+                navigate('/');
+              }, 1400);
+            })
+            .catch((error) => {
+              console.log(error);
+            });
         }
-      },
-      (error) => {
-        console.log(error);
-        setIsLoading(false);
-      }
-    );
+      );
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  const onCreateRecipe = (file) => {
-    onLoadingImg(file);
+  // const onLoadingImg = (file) => {
+  //   if (!file[0]) return;
+  //   const uploadTask = storage
+  //     .ref(`recipes/${user.current?.email}/recipe/${file[0].name}`)
+  //     .put(file[0]);
+  //   uploadTask.on(
+  //     'state_changed',
+  //     (snapshot) => {
+  //       const progress = Math.round(
+  //         (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+  //       );
+  //       setImgProgress(progress);
+  //       console.log('Upload is ' + progress + '% done');
+  //       setIsLoading(true);
+  //       if (progress === 100) {
+  //         setIsLoading(false);
+  //       }
+  //     },
+  //     (error) => {
+  //       console.log(error);
+  //       setIsLoading(false);
+  //     }
+  //   );
+  // };
+
+  // const onCreateRecipe = (file) => {
+  //   onLoadingImg(file);
+  // };
+
+  const onClickRemoveImage = (file) => {
+    setFile([]);
   };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -105,6 +110,7 @@ export default function CreateRecipePage() {
     maxFiles: 1,
     multiple: false,
     onDrop: (files) => {
+      console.log(files);
       setFile(
         files.map((file) =>
           Object.assign(file, {
@@ -112,13 +118,15 @@ export default function CreateRecipePage() {
           })
         )
       );
+      onCreateRecipe(files);
     },
+
     onDropRejected: () => {
       toast.error('File is not an image!', {
         autoClose: 1200,
       });
     },
-    onDropAccepted: onCreateRecipe,
+    //onDropAccepted: onCreateRecipe,
   });
 
   return (
@@ -132,6 +140,7 @@ export default function CreateRecipePage() {
           onCreateRecipe={onCreateRecipe}
           isLoading={isLoading}
           imgProgress={imgProgress}
+          onClickRemoveImage={onClickRemoveImage}
         />
       </Container>
       <ToastContainer />

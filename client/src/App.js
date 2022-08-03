@@ -125,9 +125,6 @@ function ProtectedRoute({ children }) {
         if (response.message === 'user-profile-not-found') {
           return navigate('/account/register-profile');
         }
-        // if (response.message === 'user-profile-found') {
-        //   return navigate('/');
-        //
       } catch (error) {
         console.log(error);
       }

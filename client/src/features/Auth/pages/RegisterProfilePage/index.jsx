@@ -6,12 +6,17 @@ import { auth } from '../../../../firebase';
 import userApi from '../../../../api/userApi';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useSteps } from 'chakra-ui-steps';
 
 export default function RegisterProfilePage() {
   const [formInfoData, setFormInfoData] = useState({
     username: '',
     fullName: '',
     bio: '',
+  });
+
+  const { activeStep } = useSteps({
+    initialStep: 1,
   });
 
   const onClickSubmitInfoForm = async (values) => {
@@ -62,11 +67,13 @@ export default function RegisterProfilePage() {
       <Box flex='1'>
         <Center h='100vh'>
           <Container>
-            <RegisterProfileForm
-              formInfoData={formInfoData}
-              setFormInfoData={setFormInfoData}
-              onClickSubmitInfoForm={onClickSubmitInfoForm}
-            />
+            {activeStep === 1 && (
+              <RegisterProfileForm
+                formInfoData={formInfoData}
+                setFormInfoData={setFormInfoData}
+                onClickSubmitInfoForm={onClickSubmitInfoForm}
+              />
+            )}
           </Container>
         </Center>
       </Box>
